@@ -3,6 +3,8 @@ package breach
 
 import (
 	"math/rand"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type Symbol int
@@ -14,7 +16,22 @@ const (
 	X7A               // 7A
 	X1C               // IC
 	end
+	XXX // XX
 )
+
+type SymbolMsg struct {
+	symbol   Symbol
+	selected bool
+}
+
+func OnSymbol(symbol Symbol, selected bool) tea.Cmd {
+	return func() tea.Msg {
+		return SymbolMsg{
+			symbol:   symbol,
+			selected: selected,
+		}
+	}
+}
 
 func newSymbols(size int) []Symbol {
 	s := make([]Symbol, size)
