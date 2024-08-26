@@ -8,18 +8,21 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type BufferIsFullMsg bool
+const BufferIsFull EndReason = "Buffer is full"
+const NotEnoughSpace EndReason = "Not enough space to complete sequence"
 
-func BufferIsFull() tea.Cmd {
+type BufferSizeMsg int
+
+func OnBufferSizeMsg(size int) tea.Cmd {
 	return func() tea.Msg {
-		return BufferIsFullMsg(true)
+		return BufferSizeMsg(size)
 	}
 }
 
 type Buffer struct {
 	data   []Symbol
 	x      int
-	isDone bool
+	isFull bool
 }
 
 func (b Buffer) Last() int { return len(b.data) - b.x }
@@ -28,23 +31,13 @@ func (b *Buffer) SetCurrentSymbol(sym Symbol) {
 	b.data[b.x] = sym
 }
 
-func (b *Buffer) UseBufferBlock() tea.Cmd {
-	if b.x >= len(b.data)-1 {
-		b.isDone = true
-		return BufferIsFull()
+func (b Buffer) UseBufferBlock() (Buffer, tea.Cmd) {
+	if b.x <= len(b.data) {
+		b.x++
+	} else {
+		b.isFull = true
 	}
-	b.x++
-	return nil
-}
-
-// CanFillSequences compare length to see if buffer can fill a given sequence
-func (b Buffer) CanFillSequences(sequences []*Sequence) bool {
-	for _, seq := range sequences {
-		if !seq.IsDone() && seq.Last() <= b.Last() {
-			return true
-		}
-	}
-	return false
+	return b, OnBufferSizeMsg(b.Last())
 }
 
 func (b Buffer) Init() tea.Cmd { return nil }
@@ -52,9 +45,12 @@ func (b Buffer) Init() tea.Cmd { return nil }
 func (b Buffer) Update(msg tea.Msg) (Buffer, tea.Cmd) {
 	switch msg := msg.(type) {
 	case SymbolMsg:
+		if b.isFull {
+			return b, nil
+		}
 		b.SetCurrentSymbol(msg.symbol)
 		if msg.selected {
-			return b, b.UseBufferBlock()
+			return b.UseBufferBlock()
 		}
 	}
 	return b, nil
@@ -69,7 +65,6 @@ func (b Buffer) View() string {
 			buf.WriteString(defaultStyle.InactiveSymbol.Render("[  ]"))
 		}
 	}
-	buf.WriteString(fmt.Sprintf("last: %d", b.Last()))
 	var s strings.Builder
 	s.WriteString(lipgloss.NewStyle().Foreground(lipgloss.Color("#fff700")).Padding(0, 1).Render("Buffer"))
 	s.WriteString("\n")
@@ -81,6 +76,6 @@ func NewBuffer(size int) Buffer {
 	return Buffer{
 		data:   make([]Symbol, size),
 		x:      0,
-		isDone: false,
+		isFull: false,
 	}
 }

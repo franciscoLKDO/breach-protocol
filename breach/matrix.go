@@ -104,7 +104,7 @@ func (m MatrixModel) View() string {
 		for j, sym := range symbols {
 			switch true {
 			case sym == XXX:
-				s.WriteString(defaultStyle.CurrentSymbol.Render(sym.String()))
+				s.WriteString(defaultStyle.CurrentSymbol.Render("  "))
 			case j == x && i == y:
 				s.WriteString(defaultStyle.CurrentSymbol.Render(sym.String()))
 			case j == x && m.axe == Y:
@@ -120,7 +120,7 @@ func (m MatrixModel) View() string {
 			s.WriteString("\n")
 		}
 	}
-	return newBox("code Matrix", s.String(), lipgloss.Center)
+	return SpaceBox("code Matrix", s.String(), lipgloss.Center)
 }
 
 func NewMatrix(size int) MatrixModel {

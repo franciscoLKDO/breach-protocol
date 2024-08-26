@@ -1,7 +1,6 @@
 package breach
 
 import (
-	"fmt"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -41,7 +40,7 @@ func (s *Sequence) VerifySymbol(sym Symbol) tea.Cmd {
 	}
 	if s.x >= len(s.data) {
 		s.isDone = true
-		return OnSequenceDoneMsg(0, true) //TODO CONTINUE HERE
+		return OnSequenceDoneMsg(0, true)
 	}
 	return nil
 }
@@ -70,7 +69,6 @@ func (s Sequence) View() string {
 		}
 		res.WriteString(" ")
 	}
-	res.WriteString(fmt.Sprintf("last: %d", s.Last())) // debug
 	return res.String()
 }
 
