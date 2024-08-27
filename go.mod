@@ -1,4 +1,4 @@
-module franciscolkdo/breach-protocol
+module github.com/franciscolkdo/breach-protocol
 
 go 1.20
 

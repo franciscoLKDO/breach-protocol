@@ -1,0 +1,5 @@
+.vscode
+test/results
+.git
+.gitignore
+Dockerfile

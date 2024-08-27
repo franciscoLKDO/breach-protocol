@@ -1,7 +1,7 @@
 package main
 
 import (
-	"franciscolkdo/breach-protocol/breach"
+	"github.com/franciscolkdo/breach-protocol/breach"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
