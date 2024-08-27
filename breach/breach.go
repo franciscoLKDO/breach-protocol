@@ -40,13 +40,15 @@ const TimerDone EndReason = "Timer is ended"
 // BreachModel is the base model for the game
 type BreachModel struct {
 	matrix      MatrixModel
+	cfg         []Roundconfig
 	buffer      Buffer
 	sequences   []Sequence
 	endRound    EndRoundModel
 	askQuit     bool
 	currentView View
-
-	timer timer.Model
+	round       int
+	score       int
+	timer       timer.Model
 
 	Width    int
 	Height   int
@@ -61,13 +63,14 @@ func (b *BreachModel) SetSize(msg tea.WindowSizeMsg) {
 }
 
 // NewGame reset breach values to restart a new round/game
-func (b BreachModel) NewGame() (tea.Model, tea.Cmd) {
-	b.matrix = NewMatrix(5)
-	b.sequences = NewSequences([]int{3, 5, 6})
-	b.buffer = NewBuffer(10)
+func (b *BreachModel) NewRound() {
+	round := b.cfg[b.round]
+	b.matrix = NewMatrix(round.Matrix)
+	b.sequences = NewSequences(round.Sequences)
+	b.buffer = NewBuffer(round.Buffer)
 	b.currentView = Breach
 	b.timer.Timeout = 30 * time.Second
-	return b, nil
+	b.round++
 }
 
 // updateKeysMsg reroute keys stokes to current view
@@ -142,10 +145,15 @@ func (b BreachModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return b, tea.Batch(b.timer.Stop(), cmd)
 	// EndGameMsg quit or restart a new round
 	case EndGameMsg:
-		if msg == Quit {
+		switch msg {
+		case Quit:
 			return b, tea.Quit
+		case Restart:
+			b.round = 0
+			b.score = 0
 		}
-		return b.NewGame()
+		b.NewRound()
+		return b, nil
 	// End round on timer timeout
 	case timer.TimeoutMsg:
 		return b.isOver(TimerDone)
@@ -154,6 +162,7 @@ func (b BreachModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return b.checkBufferSize(msg)
 	// Check sequences status on symbols saved
 	case SequenceStatusMsg:
+		b.score += msg.Points
 		if msg.Status == SequenceSuccess || msg.Status == SequenceFailed {
 			// Check if any sequence is not Done
 			if idx := slices.IndexFunc(b.sequences, func(seq Sequence) bool { return !seq.IsDone() }); idx < 0 {
@@ -251,19 +260,21 @@ func (b BreachModel) timerView() string {
 }
 
 // NewBreachModel return a breach model instance
-func NewBreachModel() BreachModel {
-	return BreachModel{
-		matrix:      NewMatrix(10), // TODO transform const to var/config
-		buffer:      NewBuffer(10),
-		sequences:   NewSequences([]int{3, 5, 6}),
+func NewBreachModel(cfg []Roundconfig) BreachModel {
+	b := BreachModel{
+		cfg:         cfg,
 		endRound:    NewEndRound(),
 		askQuit:     false,
 		quitting:    false,
 		currentView: Breach,
+		round:       0,
+		score:       0,
 
 		timer:  timer.NewWithInterval(30*time.Second, time.Second),
 		KeyMap: DefaultKeyMap(),
 	}
+	b.NewRound()
+	return b
 }
 
 func max(a, b int) int {

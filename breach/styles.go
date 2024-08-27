@@ -6,7 +6,8 @@ import "github.com/charmbracelet/lipgloss"
 type Styles struct {
 	ValidatedSymbol lipgloss.Style
 	CurrentSymbol   lipgloss.Style
-	FailedSymbol    lipgloss.Style
+	FailedSequence  lipgloss.Style
+	SuccessSequence lipgloss.Style
 	InactiveSymbol  lipgloss.Style
 	CurrentAxe      lipgloss.Style
 }
@@ -22,7 +23,8 @@ func DefaultStylesWithRenderer(r *lipgloss.Renderer) Styles {
 	return Styles{
 		ValidatedSymbol: r.NewStyle().Foreground(lipgloss.Color("#05832d")),
 		CurrentSymbol:   r.NewStyle().Foreground(lipgloss.Color("#00ff00")).Bold(true),
-		FailedSymbol:    r.NewStyle().Background(lipgloss.Color("#780606")).Bold(true),
+		FailedSequence:  r.NewStyle().Background(lipgloss.Color("#780606")).Bold(true),
+		SuccessSequence: r.NewStyle().Background(lipgloss.Color("#05832d")).Bold(true),
 		InactiveSymbol:  r.NewStyle().Foreground(lipgloss.Color("#008bc1")),
 		CurrentAxe:      r.NewStyle().Foreground(lipgloss.Color("#666700")),
 	}
