@@ -24,51 +24,52 @@ func (m MatrixModel) SetSymbol(s Symbol) { m.data[m.y][m.x] = s }
 
 func (m MatrixModel) GetCoordonates() (int, int) { return m.x, m.y }
 
-func (m *MatrixModel) SetX(x int) {
-	if x >= 0 && x < len(m.data) {
-		m.x = x
+func (m *MatrixModel) setX(x int) {
+	m.x += x
+	if m.x < 0 {
+		m.x = len(m.data[m.y]) - 1
+	} else if m.x >= len(m.data[m.y]) {
+		m.x = 0
 	}
 }
 
-func (m *MatrixModel) SetY(y int) {
-	if y >= 0 && y < len(m.data) {
-		m.y = y
+func (m *MatrixModel) setY(y int) {
+	m.y += y
+	if m.y < 0 {
+		m.y = len(m.data) - 1
+	} else if m.y >= len(m.data) {
+		m.y = 0
 	}
 }
 
-func (m *MatrixModel) setKeymapX() {
-	m.keyMap.Left.SetEnabled(true)
-	m.keyMap.Right.SetEnabled(true)
-	m.keyMap.Down.SetEnabled(false)
-	m.keyMap.Up.SetEnabled(false)
-}
-
-func (m *MatrixModel) setKeymapY() {
-	m.keyMap.Left.SetEnabled(false)
-	m.keyMap.Right.SetEnabled(false)
-	m.keyMap.Down.SetEnabled(true)
-	m.keyMap.Up.SetEnabled(true)
+func (m *MatrixModel) setKeymap() {
+	x := true
+	y := false
+	if m.axe == Y {
+		x = false
+		y = true
+	}
+	m.keyMap.Left.SetEnabled(x)
+	m.keyMap.Right.SetEnabled(x)
+	m.keyMap.Down.SetEnabled(y)
+	m.keyMap.Up.SetEnabled(y)
 }
 
 func (m *MatrixModel) rotateAxe() {
 	m.axe = 1 - m.axe
-	if m.axe == X {
-		m.setKeymapX()
-	} else {
-		m.setKeymapY()
-	}
+	m.setKeymap()
 }
 
 // applySymbol on enter cmd, selected symbol should not be actual symbol  (if actual exist)
-func (m *MatrixModel) applySymbol() tea.Cmd {
+func (m MatrixModel) applySymbol() (MatrixModel, tea.Cmd) {
 	// If coordonates are already choosen, pass
 	sym := m.GetSymbol()
 	if sym == XXX {
-		return nil
+		return m, nil
 	}
 	m.SetSymbol(XXX)
 	m.rotateAxe()
-	return OnSymbol(sym, true)
+	return m, OnSymbol(sym, true)
 }
 
 func (m MatrixModel) Init() tea.Cmd { return nil }
@@ -78,19 +79,19 @@ func (m MatrixModel) Update(msg tea.Msg) (MatrixModel, tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.keyMap.Right):
-			m.SetX(m.x + 1)
+			m.setX(1)
 			return m, OnSymbol(m.GetSymbol(), false)
 		case key.Matches(msg, m.keyMap.Left):
-			m.SetX(m.x - 1)
+			m.setX(-1)
 			return m, OnSymbol(m.GetSymbol(), false)
 		case key.Matches(msg, m.keyMap.Up):
-			m.SetY(m.y - 1)
+			m.setY(-1)
 			return m, OnSymbol(m.GetSymbol(), false)
 		case key.Matches(msg, m.keyMap.Down):
-			m.SetY(m.y + 1)
+			m.setY(+1)
 			return m, OnSymbol(m.GetSymbol(), false)
 		case key.Matches(msg, m.keyMap.Select):
-			return m, m.applySymbol()
+			return m.applySymbol()
 		}
 	}
 	return m, nil
@@ -102,17 +103,22 @@ func (m MatrixModel) View() string {
 	x, y := m.GetCoordonates()
 	for i, symbols := range data {
 		for j, sym := range symbols {
+			msg := sym.String()
+			if sym == XXX {
+				msg = "  "
+			}
 			switch true {
-			case sym == XXX:
-				s.WriteString(defaultStyle.CurrentSymbol.Render("  "))
 			case j == x && i == y:
-				s.WriteString(defaultStyle.CurrentSymbol.Render(sym.String()))
+				if sym == XXX {
+					msg = "__"
+				}
+				s.WriteString(defaultStyle.CurrentSymbol.Render(msg))
 			case j == x && m.axe == Y:
-				s.WriteString(defaultStyle.CurrentAxe.Render(sym.String()))
+				s.WriteString(defaultStyle.CurrentAxe.Render(msg))
 			case i == y && m.axe == X:
-				s.WriteString(defaultStyle.CurrentAxe.Render(sym.String()))
+				s.WriteString(defaultStyle.CurrentAxe.Render(msg))
 			default:
-				s.WriteString(defaultStyle.InactiveSymbol.Render(sym.String()))
+				s.WriteString(defaultStyle.InactiveSymbol.Render(msg))
 			}
 			s.WriteString(" ")
 		}
@@ -136,6 +142,6 @@ func NewMatrix(size int) MatrixModel {
 		axe:    X,
 		keyMap: DefaultKeyMap(),
 	}
-	matrix.setKeymapX()
+	matrix.setKeymap()
 	return matrix
 }

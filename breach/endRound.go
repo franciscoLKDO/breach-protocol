@@ -100,34 +100,3 @@ func NewEndRound() EndRoundModel {
 		options:       []EndGameMsg{Continue, Quit},
 	}
 }
-
-func SpaceBox(title string, content string, align lipgloss.Position) string {
-	var s strings.Builder
-	// Set titleBorder
-	titleBorder := lipgloss.NormalBorder()
-	titleBorder.Top = "═"
-	titleBorder.Right = "║"
-	titleBorder.TopRight = "╗"
-	titleBorder.TopLeft = "╭"
-	titleBorder.BottomLeft = "├"
-	titleBorder.BottomRight = "║"
-	// Set title box
-	titleStyle := lipgloss.NewStyle().Background(lipgloss.Color("#fff700")).BorderStyle(titleBorder).Padding(0, 10, 0, 0)
-	// Set content
-	contentBorder := lipgloss.NormalBorder()
-	contentBorder.Right = "║"
-	contentBorder.BottomRight = "╯"
-	contentStyle := lipgloss.NewStyle().Border(contentBorder).Align(align).Padding(0, 0).UnsetBorderTop()
-
-	contentBox := contentStyle.Render(content)
-	titleBox := titleStyle.Render(title)
-
-	if lipgloss.Width(contentBox) > lipgloss.Width(titleBox) {
-		titleBox = titleStyle.Width(lipgloss.Width(contentBox) - titleStyle.GetHorizontalFrameSize()).Render(title)
-	}
-	s.WriteString(titleBox)
-	s.WriteString("\n")
-	s.WriteString(contentStyle.Width(lipgloss.Width(titleBox) - contentStyle.GetHorizontalFrameSize()).Render(content))
-
-	return lipgloss.NewStyle().Padding(1, 2, 1, 2).Render(s.String())
-}

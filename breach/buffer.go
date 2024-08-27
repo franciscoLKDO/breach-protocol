@@ -1,7 +1,6 @@
 package breach
 
 import (
-	"fmt"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -59,11 +58,16 @@ func (b Buffer) Update(msg tea.Msg) (Buffer, tea.Cmd) {
 func (b Buffer) View() string {
 	var buf strings.Builder
 	for i, sym := range b.data {
-		if i <= b.x {
-			buf.WriteString(defaultStyle.InactiveSymbol.Render(fmt.Sprintf("[%s]", sym)))
-		} else {
-			buf.WriteString(defaultStyle.InactiveSymbol.Render("[  ]"))
+		msg := sym.String()
+		style := defaultStyle.InactiveSymbol
+		if i == b.x {
+			style = defaultStyle.CurrentSymbol
+		} else if i > b.x {
+			msg = "  "
 		}
+		buf.WriteString(defaultStyle.InactiveSymbol.Render("["))
+		buf.WriteString(style.Render(msg))
+		buf.WriteString(defaultStyle.InactiveSymbol.Render("]"))
 	}
 	var s strings.Builder
 	s.WriteString(lipgloss.NewStyle().Foreground(lipgloss.Color("#fff700")).Padding(0, 1).Render("Buffer"))
