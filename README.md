@@ -12,7 +12,7 @@ Breach Protocol is a terminal UI game inspired by the hacking minigame from Cybe
 
 ## Features
 
-- **Terminal UI**: Immerse yourself in a cyberpunk world right from your terminal, based on [Charms](https://charms.sh).
+- **Terminal UI**: Immerse yourself in a cyberpunk world right from your terminal, based on [Charm](https://charm.sh).
 - **Sequence Matching**: Solve puzzles and breach systems, just like in Cyberpunk 2077.
 - TODO: **Cross-Platform**: Play on Linux, macOS, or Windows.
 - **Multiple Installation Options**: Install via Go, Docker, or download the binary directly.
@@ -25,9 +25,11 @@ To install the game using Go, make sure you have Go installed on your system, th
 
 ```bash
 go install github.com/franciscolkdo/breach-protocol@latest
+
+breach-protocol start
 ```
 
-### Using Docker
+### Using Docker (WIP)
 
 You can also run the game using Docker:
 
@@ -35,7 +37,7 @@ You can also run the game using Docker:
 docker run --rm -it franciscolkdo/breach-protocol
 ```
 
-### Direct Download
+### Direct Download (WIP)
 
 If you prefer, you can download the binary directly from the [releases page](https://github.com/franciscolkdo/breach-protocol/releases):
 
@@ -49,7 +51,7 @@ If you prefer, you can download the binary directly from the [releases page](htt
 3. Run the game:
 
     ```bash
-    ./breach-protocol
+    ./breach-protocol start
     ```
 
 ## How to Play
@@ -64,4 +66,4 @@ Contributions are welcome! Feel free to fork this repository and submit a pull r
 
 ## License
 
-this project use MIT license
+This project use MIT license
