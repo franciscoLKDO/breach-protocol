@@ -14,6 +14,7 @@ type MatrixModel struct {
 	y      int
 	axe    Axe
 	keyMap KeyMap
+	style  MatrixStyle
 }
 
 func (m MatrixModel) GetData() [][]Symbol { return m.data }
@@ -112,21 +113,27 @@ func (m MatrixModel) View() string {
 				if sym == XXX {
 					msg = "__"
 				}
-				s.WriteString(defaultStyle.CurrentSymbol.Render(msg))
+				s.WriteString(m.style.CurrentSymbol.Render(msg))
 			case j == x && m.axe == Y:
-				s.WriteString(defaultStyle.CurrentAxe.Render(msg))
+				s.WriteString(m.style.CurrentAxe.Render(msg))
 			case i == y && m.axe == X:
-				s.WriteString(defaultStyle.CurrentAxe.Render(msg))
+				s.WriteString(m.style.CurrentAxe.Render(msg))
 			default:
-				s.WriteString(defaultStyle.InactiveSymbol.Render(msg))
+				s.WriteString(m.style.InactiveSymbol.Render(msg))
 			}
-			s.WriteString(" ")
+			s.WriteString(RootStyle.Render(" "))
 		}
 		if i < len(data)-1 {
-			s.WriteString("\n")
+			newLine(&s)
 		}
 	}
 	return SpaceBox("code Matrix", s.String(), lipgloss.Center)
+}
+
+type MatrixStyle struct {
+	CurrentSymbol  lipgloss.Style
+	InactiveSymbol lipgloss.Style
+	CurrentAxe     lipgloss.Style
 }
 
 func NewMatrix(size int) MatrixModel {
@@ -141,6 +148,11 @@ func NewMatrix(size int) MatrixModel {
 
 		axe:    X,
 		keyMap: DefaultKeyMap(),
+		style: MatrixStyle{
+			CurrentSymbol:  RootStyle.Foreground(NeonPink).Bold(true),
+			InactiveSymbol: RootStyle.Foreground(Indigo),
+			CurrentAxe:     RootStyle.Foreground(NeonCyan),
+		},
 	}
 	matrix.setKeymap()
 	return matrix

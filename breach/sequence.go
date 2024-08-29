@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type SequenceStatus int
@@ -33,6 +34,7 @@ type Sequence struct {
 	status      SequenceStatus
 	description string
 	points      int
+	style       SequenceStyle
 }
 
 func (s Sequence) GetPosition() int          { return s.x }
@@ -80,26 +82,34 @@ func (s Sequence) View() string {
 	if s.status == SequenceRunning {
 		for i, sym := range s.data {
 			if i < s.x {
-				res.WriteString(defaultStyle.ValidatedSymbol.Render(sym.String()))
+				res.WriteString(s.style.ValidatedSymbol.Render(sym.String()))
 			} else if i == s.x {
-				res.WriteString(defaultStyle.CurrentSymbol.Render(sym.String()))
+				res.WriteString(s.style.CurrentSymbol.Render(sym.String()))
 			} else {
-				res.WriteString(defaultStyle.InactiveSymbol.Render(sym.String()))
+				res.WriteString(s.style.NextSymbol.Render(sym.String()))
 			}
-			res.WriteString(" ")
+			res.WriteString(RootStyle.Render(" "))
 		}
-		res.WriteString(s.description)
-		return res.String()
+		res.WriteString(RootStyle.Render(s.description))
+	} else {
+		style := s.style.Success
+		if s.status == SequenceFailed {
+			style = s.style.Failed
+		}
+		for _, sym := range s.data {
+			res.WriteString(style.Render(sym.String() + " "))
+		}
+		res.WriteString(style.Render(s.description))
 	}
-	style := defaultStyle.SuccessSequence
-	if s.status == SequenceFailed {
-		style = defaultStyle.FailedSequence
-	}
-	for _, sym := range s.data {
-		res.WriteString(style.Render(sym.String() + " "))
-	}
-	res.WriteString(style.Render(s.description))
 	return res.String()
+}
+
+type SequenceStyle struct {
+	CurrentSymbol   lipgloss.Style
+	ValidatedSymbol lipgloss.Style
+	NextSymbol      lipgloss.Style
+	Failed          lipgloss.Style
+	Success         lipgloss.Style
 }
 
 func NewSequence(cfg SequenceConfig, id int) Sequence {
@@ -110,6 +120,13 @@ func NewSequence(cfg SequenceConfig, id int) Sequence {
 		status:      SequenceRunning,
 		description: cfg.Description,
 		points:      cfg.Points,
+		style: SequenceStyle{
+			CurrentSymbol:   RootStyle.Foreground(NeonPink).Bold(true),
+			ValidatedSymbol: RootStyle.Foreground(LimeGreen),
+			NextSymbol:      RootStyle.Foreground(NeonCyan),
+			Failed:          RootStyle.Background(DarkRed).Bold(true),
+			Success:         RootStyle.Background(VividGreen).Bold(true),
+		},
 	}
 }
 

@@ -22,6 +22,7 @@ type Buffer struct {
 	data   []Symbol
 	x      int
 	isFull bool
+	style  BufferStyle
 }
 
 func (b Buffer) Last() int { return len(b.data) - b.x }
@@ -59,21 +60,23 @@ func (b Buffer) View() string {
 	var buf strings.Builder
 	for i, sym := range b.data {
 		msg := sym.String()
-		style := defaultStyle.InactiveSymbol
+		style := b.style.Selected
 		if i == b.x {
-			style = defaultStyle.CurrentSymbol
+			style = b.style.Current
 		} else if i > b.x {
 			msg = "  "
 		}
-		buf.WriteString(defaultStyle.InactiveSymbol.Render("["))
+		buf.WriteString(b.style.Selected.Render("["))
 		buf.WriteString(style.Render(msg))
-		buf.WriteString(defaultStyle.InactiveSymbol.Render("]"))
+		buf.WriteString(b.style.Selected.Render("]"))
 	}
-	var s strings.Builder
-	s.WriteString(lipgloss.NewStyle().Foreground(lipgloss.Color("#fff700")).Padding(0, 1).Render("Buffer"))
-	s.WriteString("\n")
-	s.WriteString(lipgloss.NewStyle().Border(lipgloss.NormalBorder()).Padding(0, 0).Render(buf.String()))
-	return s.String()
+
+	return SpaceBox(RootStyle.Foreground(BrightGold).Padding(0, 1).Render("Buffer"), RootStyle.Padding(0, 0).Render(buf.String()), lipgloss.Center)
+}
+
+type BufferStyle struct {
+	Current  lipgloss.Style
+	Selected lipgloss.Style
 }
 
 func NewBuffer(size int) Buffer {
@@ -81,5 +84,9 @@ func NewBuffer(size int) Buffer {
 		data:   make([]Symbol, size),
 		x:      0,
 		isFull: false,
+		style: BufferStyle{
+			Current:  RootStyle.Foreground(NeonPink).Bold(true),
+			Selected: RootStyle.Foreground(LimeGreen),
+		},
 	}
 }

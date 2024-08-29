@@ -17,14 +17,14 @@ func SpaceBox(title string, content string, align lipgloss.Position) string {
 	titleBorder.BottomLeft = "├"
 	titleBorder.BottomRight = "║"
 	// Set title box
-	titleStyle := lipgloss.NewStyle().Background(lipgloss.Color("#fff700")).BorderStyle(titleBorder).Padding(0, 10, 0, 0)
+	titleStyle := RootStyle.BorderStyle(titleBorder).Foreground(lipgloss.Color("#FFD700")).Padding(0, 10, 0, 0)
 	titleBox := titleStyle.Render(title)
 	// Set contentBorder
 	contentBorder := lipgloss.NormalBorder()
 	contentBorder.Right = "║"
 	contentBorder.BottomRight = "╯"
 	// Set content box
-	contentStyle := lipgloss.NewStyle().Border(contentBorder).Align(align).Padding(0, 0).UnsetBorderTop()
+	contentStyle := RootStyle.Border(contentBorder).Align(align).Padding(0, 0).UnsetBorderTop()
 	contentBox := contentStyle.Render(content)
 
 	// Align title and content boxes
@@ -32,8 +32,8 @@ func SpaceBox(title string, content string, align lipgloss.Position) string {
 		titleBox = titleStyle.Width(lipgloss.Width(contentBox) - contentStyle.GetHorizontalFrameSize()).Render(title)
 	}
 	s.WriteString(titleBox)
-	s.WriteString("\n")
+	newLine(&s)
 	s.WriteString(contentStyle.Width(lipgloss.Width(titleBox) - contentStyle.GetHorizontalFrameSize()).Render(content))
 
-	return lipgloss.NewStyle().Padding(1, 2, 1, 2).Render(s.String())
+	return RootStyle.Padding(1, 2, 1, 2).Render(s.String())
 }
