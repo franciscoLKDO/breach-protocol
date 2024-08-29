@@ -14,7 +14,7 @@ const (
 	XBD               // BD
 	XE9               // E9
 	X7A               // 7A
-	X1C               // IC
+	X1C               // 1C
 	end
 	XXX // XX
 )
@@ -36,7 +36,7 @@ func OnSymbol(symbol Symbol, selected bool) tea.Cmd {
 func newSymbols(size int) []Symbol {
 	s := make([]Symbol, size)
 	for i := 0; i < len(s); i++ {
-		s[i] = Symbol(rand.Intn(int(end) - 1)) // end does not count
+		s[i] = Symbol(rand.Intn(int(end))) // Symbols "end" and "XXX" does not count
 	}
 	return s
 }

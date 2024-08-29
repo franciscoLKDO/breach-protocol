@@ -19,17 +19,17 @@ var DefaultConfig = []Roundconfig{
 		Sequences: []SequenceConfig{
 			{
 				Size:        3,
-				Description: "Initialize connection",
+				Description: "Extract sensitive data",
 				Points:      10,
 			},
 			{
 				Size:        5,
-				Description: "Steal credentials",
+				Description: "Steal user credentials",
 				Points:      30,
 			},
 			{
 				Size:        6,
-				Description: "Extract databases",
+				Description: "Corrupt database records",
 				Points:      50,
 			},
 		},
@@ -40,18 +40,18 @@ var DefaultConfig = []Roundconfig{
 		Sequences: []SequenceConfig{
 			{
 				Size:        3,
-				Description: "Remove logs",
+				Description: "Avoid firewall detection",
 				Points:      10,
 			},
 			{
 				Size:        5,
-				Description: "Exploit Netwatch bug",
+				Description: "Decrypt encrypted files",
 				Points:      30,
 			},
 			{
 				Size:        10,
 				Description: "Burn Netrunner ice",
-				Points:      50,
+				Points:      70,
 			},
 		},
 	},
@@ -61,8 +61,8 @@ var DefaultConfig = []Roundconfig{
 		Sequences: []SequenceConfig{
 			{
 				Size:        3,
-				Description: "Build own ice",
-				Points:      10,
+				Description: "Lock out intruders",
+				Points:      30,
 			},
 		},
 	},
@@ -73,12 +73,12 @@ var DefaultConfig = []Roundconfig{
 			{
 				Size:        5,
 				Description: "Find Mikoshi source code",
-				Points:      10,
+				Points:      30,
 			},
 			{
 				Size:        6,
 				Description: "Escape Arasaka Netrunners",
-				Points:      10,
+				Points:      50,
 			},
 		},
 	},

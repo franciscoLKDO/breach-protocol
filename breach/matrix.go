@@ -127,7 +127,7 @@ func (m MatrixModel) View() string {
 			newLine(&s)
 		}
 	}
-	return SpaceBox("code Matrix", s.String(), lipgloss.Center)
+	return SpaceBox("Code Matrix", s.String(), lipgloss.Center)
 }
 
 type MatrixStyle struct {

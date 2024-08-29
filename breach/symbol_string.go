@@ -17,7 +17,7 @@ func _() {
 	_ = x[XXX-6]
 }
 
-const _Symbol_name = "55BDE97AICendXX"
+const _Symbol_name = "55BDE97A1CendXX"
 
 var _Symbol_index = [...]uint8{0, 2, 4, 6, 8, 10, 13, 15}
 

@@ -71,7 +71,7 @@ func (b Buffer) View() string {
 		buf.WriteString(b.style.Selected.Render("]"))
 	}
 
-	return SpaceBox(RootStyle.Foreground(BrightGold).Padding(0, 1).Render("Buffer"), RootStyle.Padding(0, 0).Render(buf.String()), lipgloss.Center)
+	return SpaceBox("Buffer", RootStyle.Padding(0, 0).Render(buf.String()), lipgloss.Center)
 }
 
 type BufferStyle struct {

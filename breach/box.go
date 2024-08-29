@@ -17,7 +17,7 @@ func SpaceBox(title string, content string, align lipgloss.Position) string {
 	titleBorder.BottomLeft = "├"
 	titleBorder.BottomRight = "║"
 	// Set title box
-	titleStyle := RootStyle.BorderStyle(titleBorder).Foreground(lipgloss.Color("#FFD700")).Padding(0, 10, 0, 0)
+	titleStyle := RootStyle.BorderStyle(titleBorder).Foreground(MetallicGold).Padding(0, 10, 0, 1)
 	titleBox := titleStyle.Render(title)
 	// Set contentBorder
 	contentBorder := lipgloss.NormalBorder()

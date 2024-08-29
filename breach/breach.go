@@ -200,39 +200,45 @@ func (b BreachModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (b BreachModel) View() string {
 	var s strings.Builder
 	// Set Header
-	s.WriteString(b.topsView("Breach Protocol"))
 	newLine(&s)
+	s.WriteString(b.titleView("Breach Protocol"))
 
 	// Set Breach or EndRound View based on currentView
 	if b.currentView == EndRound {
-		s.WriteString(b.endRound.View())
+		s.WriteString(b.center(b.endRound.View()))
 	} else {
-		s.WriteString(lipgloss.JoinHorizontal(lipgloss.Bottom, b.timerView(), b.buffer.View()))
 		newLine(&s)
+		s.WriteString(b.center(b.timerView()))
 		// Workaround to force background black
-		body := lipgloss.JoinHorizontal(lipgloss.Top,
+		body := lipgloss.JoinHorizontal(lipgloss.Center,
 			b.matrix.View(),
-			lipgloss.Place(lipgloss.Width(b.sequencesView()), lipgloss.Height(b.matrix.View()), lipgloss.Right, lipgloss.Top, b.sequencesView(), lipgloss.WithWhitespaceBackground(DarkGray)),
+			lipgloss.Place(lipgloss.Width(b.sequencesView()), lipgloss.Height(b.matrix.View()), lipgloss.Left, lipgloss.Center, b.sequencesView(), lipgloss.WithWhitespaceBackground(DarkGray)),
 		)
-		s.WriteString(body)
+		s.WriteString(b.center(body))
+		s.WriteString(b.center(b.buffer.View()))
 	}
 
 	// Set Footer
 	newLine(&s)
-	s.WriteString(b.topsView("Bartmoss Team"))
+	s.WriteString(b.titleView("Bartmoss Team"))
 	newLine(&s)
 	return RootStyle.Render(s.String())
 }
 
-// topsView return the header or footer views of breach protocol
-func (b BreachModel) topsView(content string) string {
+func (b BreachModel) center(content string) string {
+	return lipgloss.Place(b.Width, lipgloss.Height(content), lipgloss.Center, lipgloss.Center, content, lipgloss.WithWhitespaceBackground(DarkGray))
+}
+
+// titleView return the header or footer views of breach protocol
+func (b BreachModel) titleView(content string) string {
 	border := lipgloss.DoubleBorder()
 	border.Right = "╠"
 	border.Left = "╣"
-	title := RootStyle.Foreground(NeonPurple).BorderForeground(MetallicGold).Bold(true).BorderStyle(border).Padding(0, 2).Render(content)
-	line := RootStyle.Foreground(MetallicGold).Render(strings.Repeat("═", max(0, (b.Width-lipgloss.Width(title))/2)))
+	title := breachStyle.Title.BorderForeground(MetallicGold).Bold(true).BorderStyle(border).Padding(0, 2).Render(content)
+	line := breachStyle.Title.Render(strings.Repeat("═", max(0, (b.Width/2)-(lipgloss.Width(title)/2))))
+
 	// Workaround to force background black after a border rendering
-	afterline := lipgloss.Place(lipgloss.Width(line), lipgloss.Height(title), lipgloss.Center, lipgloss.Center, line, lipgloss.WithWhitespaceBackground(DarkGray))
+	afterline := lipgloss.Place(b.Width, lipgloss.Height(title), lipgloss.Left, lipgloss.Center, line, lipgloss.WithWhitespaceBackground(DarkGray))
 	return lipgloss.JoinHorizontal(lipgloss.Center, line, title, afterline)
 }
 
@@ -245,16 +251,17 @@ func (b BreachModel) sequencesView() string {
 			newLine(&s)
 		}
 	}
-	return SpaceBox("Sequences required to upload", s.String(), lipgloss.Left)
+	return SpaceBox("Sequences to upload", s.String(), lipgloss.Left)
 }
 
 // timerView return the timer view
 func (b BreachModel) timerView() string {
 	var s strings.Builder
+	time := RootStyle.Foreground(NeonMagenta).Render(fmt.Sprintf("%.4s", b.timer.View()))
 	s.WriteString(RootStyle.
-		Border(lipgloss.NormalBorder()).
-		Foreground(BrightGold).
-		Padding(0, 1).Render(fmt.Sprintf("BREACH TIME REMAINING: %s ", b.timer.View())))
+		Border(lipgloss.NormalBorder()).BorderBackground(DarkGray).
+		Foreground(MetallicGold).
+		Padding(0, 1).Render("Breach Time Remaining: " + time))
 	return s.String()
 }
 

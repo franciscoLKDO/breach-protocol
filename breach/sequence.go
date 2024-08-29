@@ -7,6 +7,8 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+const seqMax = 10
+
 type SequenceStatus int
 
 const (
@@ -79,6 +81,7 @@ func (s Sequence) Update(msg tea.Msg) (Sequence, tea.Cmd) {
 
 func (s Sequence) View() string {
 	var res strings.Builder
+	alignDesc := RootStyle.Render(strings.Repeat("   ", seqMax-len(s.data)))
 	if s.status == SequenceRunning {
 		for i, sym := range s.data {
 			if i < s.x {
@@ -90,7 +93,7 @@ func (s Sequence) View() string {
 			}
 			res.WriteString(RootStyle.Render(" "))
 		}
-		res.WriteString(RootStyle.Render(s.description))
+		res.WriteString(alignDesc + RootStyle.Render(s.description))
 	} else {
 		style := s.style.Success
 		if s.status == SequenceFailed {
@@ -99,7 +102,7 @@ func (s Sequence) View() string {
 		for _, sym := range s.data {
 			res.WriteString(style.Render(sym.String() + " "))
 		}
-		res.WriteString(style.Render(s.description))
+		res.WriteString(alignDesc + style.Render(s.description))
 	}
 	return res.String()
 }
@@ -124,8 +127,8 @@ func NewSequence(cfg SequenceConfig, id int) Sequence {
 			CurrentSymbol:   RootStyle.Foreground(NeonPink).Bold(true),
 			ValidatedSymbol: RootStyle.Foreground(LimeGreen),
 			NextSymbol:      RootStyle.Foreground(NeonCyan),
-			Failed:          RootStyle.Background(DarkRed).Bold(true),
-			Success:         RootStyle.Background(VividGreen).Bold(true),
+			Failed:          RootStyle.Foreground(DarkRed).Bold(true),
+			Success:         RootStyle.Foreground(VividGreen).Bold(true),
 		},
 	}
 }
