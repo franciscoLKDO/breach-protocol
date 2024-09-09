@@ -6,6 +6,9 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/franciscolkdo/breach-protocol/game/keymap"
+	"github.com/franciscolkdo/breach-protocol/game/style"
+	"github.com/franciscolkdo/breach-protocol/tools"
 )
 
 type MatrixModel struct {
@@ -13,7 +16,7 @@ type MatrixModel struct {
 	x      int
 	y      int
 	axe    Axe
-	keyMap KeyMap
+	keyMap keymap.KeyMap
 	style  MatrixStyle
 }
 
@@ -121,13 +124,13 @@ func (m MatrixModel) View() string {
 			default:
 				s.WriteString(m.style.InactiveSymbol.Render(msg))
 			}
-			s.WriteString(RootStyle.Render(" "))
+			s.WriteString(style.RootStyle.Render(" "))
 		}
 		if i < len(data)-1 {
-			newLine(&s)
+			tools.NewLine(&s)
 		}
 	}
-	return SpaceBox("Code Matrix", s.String(), lipgloss.Center)
+	return style.SpaceBox("Code Matrix", s.String(), lipgloss.Center)
 }
 
 type MatrixStyle struct {
@@ -147,11 +150,11 @@ func NewMatrix(size int) MatrixModel {
 		y:    0,
 
 		axe:    X,
-		keyMap: DefaultKeyMap(),
+		keyMap: keymap.DefaultKeyMap(),
 		style: MatrixStyle{
-			CurrentSymbol:  RootStyle.Foreground(NeonPink).Bold(true),
-			InactiveSymbol: RootStyle.Foreground(Indigo),
-			CurrentAxe:     RootStyle.Foreground(NeonCyan),
+			CurrentSymbol:  style.RootStyle.Foreground(style.NeonPink).Bold(true),
+			InactiveSymbol: style.RootStyle.Foreground(style.Indigo),
+			CurrentAxe:     style.RootStyle.Foreground(style.NeonCyan),
 		},
 	}
 	matrix.setKeymap()

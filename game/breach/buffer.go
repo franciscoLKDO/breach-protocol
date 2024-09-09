@@ -5,10 +5,12 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/franciscolkdo/breach-protocol/game/end"
+	"github.com/franciscolkdo/breach-protocol/game/style"
 )
 
-const BufferIsFull EndReason = "Buffer is full"
-const NotEnoughSpace EndReason = "Not enough space to complete sequence"
+const BufferIsFull end.EndReason = "Buffer is full"
+const NotEnoughSpace end.EndReason = "Not enough space to complete sequence"
 
 type BufferSizeMsg int
 
@@ -71,7 +73,7 @@ func (b Buffer) View() string {
 		buf.WriteString(b.style.Selected.Render("]"))
 	}
 
-	return SpaceBox("Buffer", RootStyle.Padding(0, 0).Render(buf.String()), lipgloss.Center)
+	return style.SpaceBox("Buffer", style.RootStyle.Padding(0, 0).Render(buf.String()), lipgloss.Center)
 }
 
 type BufferStyle struct {
@@ -85,8 +87,8 @@ func NewBuffer(size int) Buffer {
 		x:      0,
 		isFull: false,
 		style: BufferStyle{
-			Current:  RootStyle.Foreground(NeonPink).Bold(true),
-			Selected: RootStyle.Foreground(LimeGreen),
+			Current:  style.RootStyle.Foreground(style.NeonPink).Bold(true),
+			Selected: style.RootStyle.Foreground(style.LimeGreen),
 		},
 	}
 }

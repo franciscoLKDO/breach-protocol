@@ -1,9 +1,10 @@
-package breach
+package style
 
 import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/franciscolkdo/breach-protocol/tools"
 )
 
 func SpaceBox(title string, content string, align lipgloss.Position) string {
@@ -32,7 +33,7 @@ func SpaceBox(title string, content string, align lipgloss.Position) string {
 		titleBox = titleStyle.Width(lipgloss.Width(contentBox) - contentStyle.GetHorizontalFrameSize()).Render(title)
 	}
 	s.WriteString(titleBox)
-	newLine(&s)
+	tools.NewLine(&s)
 	s.WriteString(contentStyle.Width(lipgloss.Width(titleBox) - contentStyle.GetHorizontalFrameSize()).Render(content))
 
 	return RootStyle.Padding(1, 2, 1, 2).Render(s.String())

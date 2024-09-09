@@ -5,7 +5,7 @@ package cmd
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/franciscolkdo/breach-protocol/breach"
+	"github.com/franciscolkdo/breach-protocol/game"
 	"github.com/spf13/cobra"
 )
 
@@ -20,9 +20,9 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		br := breach.NewBreachModel(breach.DefaultConfig)
+		g := game.NewGame()
 
-		_, err := tea.NewProgram(br, tea.WithMouseCellMotion()).Run()
+		_, err := tea.NewProgram(g, tea.WithMouseCellMotion()).Run()
 		if err != nil {
 			return err
 		}

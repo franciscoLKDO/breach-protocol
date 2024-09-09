@@ -1,4 +1,4 @@
-package breach
+package style
 
 import "github.com/charmbracelet/lipgloss"
 
@@ -43,11 +43,3 @@ func DefaultStylesWithRenderer(r *lipgloss.Renderer) Styles {
 }
 
 var RootStyle = lipgloss.NewStyle().Background(DarkGray)
-
-type BreachStyle struct {
-	Title lipgloss.Style
-}
-
-var breachStyle = BreachStyle{
-	Title: RootStyle.Foreground(MetallicGold),
-}

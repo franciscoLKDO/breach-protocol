@@ -1,4 +1,4 @@
-package breach
+package keymap
 
 import "github.com/charmbracelet/bubbles/key"
 
