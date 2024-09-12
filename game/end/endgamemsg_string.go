@@ -9,13 +9,12 @@ func _() {
 	// Re-run the stringer command to generate them again.
 	var x [1]struct{}
 	_ = x[Quit-0]
-	_ = x[Continue-1]
-	_ = x[Restart-2]
+	_ = x[Restart-1]
 }
 
-const _EndGameMsg_name = "QuitContinueRestart"
+const _EndGameMsg_name = "QuitRestart"
 
-var _EndGameMsg_index = [...]uint8{0, 4, 12, 19}
+var _EndGameMsg_index = [...]uint8{0, 4, 11}
 
 func (i EndGameMsg) String() string {
 	if i < 0 || i >= EndGameMsg(len(_EndGameMsg_index)-1) {

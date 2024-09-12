@@ -17,29 +17,4 @@ const (
 	VividGreen     = lipgloss.Color("#00A300")
 )
 
-// Styles defines the possible customizations for styles in the file picker.
-type Styles struct {
-	ValidatedSymbol  lipgloss.Style
-	CurrentSymbol    lipgloss.Style
-	FailedSequence   lipgloss.Style
-	SuccessSequence  lipgloss.Style
-	InactiveSymbol   lipgloss.Style
-	MatrixCurrentAxe lipgloss.Style
-}
-
-// DefaultStyles defines the default styling for the file picker.
-func DefaultStyles() Styles {
-	return DefaultStylesWithRenderer(lipgloss.DefaultRenderer())
-}
-
-// DefaultStylesWithRenderer defines the default styling for the file picker,
-// with a given Lip Gloss renderer.
-func DefaultStylesWithRenderer(r *lipgloss.Renderer) Styles {
-	return Styles{
-		ValidatedSymbol: r.NewStyle().Inherit(RootStyle).Foreground(BrightGold),
-		CurrentSymbol:   r.NewStyle().Inherit(RootStyle).Foreground(NeonPink).Bold(true),
-		InactiveSymbol:  r.NewStyle().Inherit(RootStyle).Foreground(Indigo),
-	}
-}
-
 var RootStyle = lipgloss.NewStyle().Background(DarkGray)

@@ -6,8 +6,9 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/franciscolkdo/breach-protocol/game/breach"
+	"github.com/franciscolkdo/breach-protocol/game/end"
 	"github.com/franciscolkdo/breach-protocol/game/keymap"
+	"github.com/franciscolkdo/breach-protocol/game/message"
 	"github.com/franciscolkdo/breach-protocol/game/style"
 	"github.com/franciscolkdo/breach-protocol/tools"
 )
@@ -25,7 +26,9 @@ const AppName = "Breach Protocol"
 const footerName = "Bartmoss Team"
 
 type Model struct {
-	currentModel tea.Model
+	cfg        Config
+	currentIdx int
+	current    tea.Model
 
 	keyMap  keymap.KeyMap
 	askQuit bool
@@ -34,105 +37,103 @@ type Model struct {
 }
 
 // Init initializes the BreachModel.
-func (g Model) Init() tea.Cmd {
-	return tea.Sequence(tea.SetWindowTitle(AppName), g.currentModel.Init())
+func (m Model) Init() tea.Cmd {
+	return tea.Sequence(tea.SetWindowTitle(AppName), m.current.Init())
 }
 
 // SetSize resize the window.
-func (b *Model) SetSize(msg tea.WindowSizeMsg) {
-	b.Height = msg.Height - marginBottom
-	b.Width = msg.Width
+func (m *Model) SetSize(msg tea.WindowSizeMsg) {
+	m.Height = msg.Height - marginBottom
+	m.Width = msg.Width
+}
+
+func (m *Model) LoadModel() tea.Cmd {
+	var err error
+	m.current, err = m.cfg.LoadModel(m.currentIdx)
+	if err != nil {
+		//TODO handle in case of error
+		return tea.Quit
+	}
+	return m.current.Init()
 }
 
 // Update handle messages for BreachModel.
-func (g Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	// Resize window
 	case tea.WindowSizeMsg:
-		var cmd tea.Cmd
-		g.SetSize(msg)
-		g.currentModel, cmd = g.currentModel.Update(msg)
-		return g, cmd
+		m.SetSize(msg)
+		m.current, cmd = m.current.Update(msg)
+		return m, cmd
 	// Quit msg
 	case tea.QuitMsg:
-		g.askQuit = true
-		return g, tea.Quit
+		m.askQuit = true
+		return m, tea.Quit
+	// Handle key strokes and send them to current model
 	case tea.KeyMsg:
-		var cmd tea.Cmd
-		if key.Matches(msg, g.keyMap.Quit) {
+		if key.Matches(msg, m.keyMap.Quit) {
 			cmd = tea.Quit
 		} else {
-			g.currentModel, cmd = g.currentModel.Update(msg)
+			m.current, cmd = m.current.Update(msg)
 		}
-		return g, cmd
-	//TODO pass keys
-	// EndReasonMsg trigger endRound view
-	// case EndReasondMsg:
-	// 	var cmd tea.Cmd
-	// 	g.endRound, cmd = g.endRound.Update(msg)
-	// 	g.currentView = EndRound
-	// 	return g, tea.Batch(g.timer.Stop(), cmd)
-	// // EndGameMsg quit or restart a new round
-	// case EndGameMsg:
-	// 	switch msg {
-	// 	case Quit:
-	// 		return g, tea.Quit
-	// 	case Restart:
-	// 		g.round = 0
-	// 		g.score = 0
-	// 	}
-	// 	g.NewRound()
-	// 	return g, nil
-	// End round on timer timeout
-
-	// Pass all messages not already handled to buffer and sequences
+		return m, cmd
+	// EndModelMsg return the state of current model, show end game if failed or next one on success
+	case message.EndModelMsg:
+		if msg.Status == message.Failed {
+			m.current = end.NewModel(end.Config{Msg: msg.Msg})
+			return m, m.current.Init()
+		} else {
+			m.currentIdx++
+			return m, m.LoadModel()
+		}
+	// EndGame return Restart or Quit, set currentIdx=0 on restart
+	case end.EndGameMsg:
+		if msg == end.Quit {
+			return m, tea.Quit
+		} else {
+			m.currentIdx = 0
+			return m, m.LoadModel()
+		}
+	// Pass all messages not already handled (internal msg for current model)
 	default:
-		var cmd tea.Cmd
-		g.currentModel, cmd = g.currentModel.Update(msg)
-		return g, cmd
+		m.current, cmd = m.current.Update(msg)
+		return m, cmd
 	}
-	return g, nil
 }
 
 // View update console on each update
-func (g Model) View() string {
+func (m Model) View() string {
 	var s strings.Builder
 	// Set Header
 	tools.NewLine(&s)
-	s.WriteString(g.titleView(AppName))
+	s.WriteString(m.titleView(AppName))
 
-	// Set Breach or EndRound View based on currentView
-	// if g.currentView == EndRound {
-	// 	s.WriteString(g.center(g.endRound.View()))
-	// } else {
-	// 	tools.NewLine(&s)
-	// 	s.WriteString(g.center(g.timerView()))
-	// 	// Workaround to force background black
-	// 	body := lipgloss.JoinHorizontal(lipgloss.Center,
-	// 		g.matrix.View(),
-	// 		lipgloss.Place(lipgloss.Width(g.sequencesView()), lipgloss.Height(g.matrix.View()), lipgloss.Left, lipgloss.Center, g.sequencesView(), lipgloss.WithWhitespaceBackground(DarkGray)),
-	// 	)
-	// 	s.WriteString(g.center(body))
-	// 	s.WriteString(g.center(g.buffer.View()))
-	// }
-	s.WriteString(g.currentModel.View())
+	// Set current Model view
+	tools.NewLine(&s)
+	s.WriteString(m.center(m.current.View()))
+
 	// Set Footer
 	tools.NewLine(&s)
-	s.WriteString(g.titleView(footerName))
+	s.WriteString(m.titleView(footerName))
 	tools.NewLine(&s)
 	return style.RootStyle.Render(s.String())
 }
 
+func (m Model) center(content string) string {
+	return lipgloss.Place(m.Width, lipgloss.Height(content), lipgloss.Center, lipgloss.Center, content, lipgloss.WithWhitespaceBackground(style.DarkGray))
+}
+
 // titleView return the header or footer views of breach protocol
-func (g Model) titleView(content string) string {
+func (m Model) titleView(content string) string {
 	border := lipgloss.DoubleBorder()
 	border.Right = "╠"
 	border.Left = "╣"
 	title := gameStyle.Title.BorderForeground(style.MetallicGold).Bold(true).BorderStyle(border).Padding(0, 2).Render(content)
-	line := gameStyle.Title.Render(strings.Repeat("═", max(0, (g.Width/2)-(lipgloss.Width(title)/2))))
+	line := gameStyle.Title.Render(strings.Repeat("═", max(0, (m.Width/2)-(lipgloss.Width(title)/2))))
 
 	// Workaround to force background black after a border rendering
-	afterline := lipgloss.Place(g.Width, lipgloss.Height(title), lipgloss.Left, lipgloss.Center, line, lipgloss.WithWhitespaceBackground(style.DarkGray))
+	afterline := lipgloss.Place(m.Width, lipgloss.Height(title), lipgloss.Left, lipgloss.Center, line, lipgloss.WithWhitespaceBackground(style.DarkGray))
 	return lipgloss.JoinHorizontal(lipgloss.Center, line, title, afterline)
 }
 
@@ -145,12 +146,15 @@ var gameStyle = GameStyle{
 }
 
 // NewGame return a game model instance
-func NewGame() Model {
-	return Model{
-		askQuit:      false,
-		currentModel: breach.NewBreachModel(breach.DefaultConfig),
-		keyMap:       keymap.DefaultKeyMap(),
+func NewGame(cfg Config) Model {
+	g := Model{
+		cfg:        cfg,
+		askQuit:    false,
+		currentIdx: 0,
+		keyMap:     keymap.DefaultKeyMap(),
 	}
+	_ = g.LoadModel()
+	return g
 }
 
 func max(a, b int) int {

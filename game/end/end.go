@@ -12,24 +12,12 @@ import (
 	"github.com/franciscolkdo/breach-protocol/tools"
 )
 
-type EndReason string
-
-type EndReasondMsg struct {
-	reason EndReason
-	isOver bool
-}
-
-func OnEndReasonMsg(reason EndReason, isOver bool) tea.Cmd {
-	return func() tea.Msg {
-		return EndReasondMsg{reason: reason, isOver: isOver}
-	}
-}
+const title = "Game Over!"
 
 type EndGameMsg int
 
 const (
 	Quit EndGameMsg = iota
-	Continue
 	Restart
 )
 
@@ -39,75 +27,69 @@ func OnEndGameMsg(msg EndGameMsg) tea.Cmd {
 	}
 }
 
-type EndRoundModel struct {
-	msg           EndReason
+type Model struct {
+	msg           string
 	keyMap        keymap.KeyMap
 	options       []EndGameMsg
 	currentOption int
-	style         EndRoundStyle
+	style         EndGameStyle
 }
 
-func (e *EndRoundModel) setCurrentOption(x int) {
-	e.currentOption += x
-	if e.currentOption < 0 {
-		e.currentOption = len(e.options) - 1
+func (m *Model) setCurrentOption(x int) {
+	m.currentOption += x
+	if m.currentOption < 0 {
+		m.currentOption = len(m.options) - 1
 	}
-	if e.currentOption >= len(e.options) {
-		e.currentOption = 0
+	if m.currentOption >= len(m.options) {
+		m.currentOption = 0
 	}
 }
 
-func (e EndRoundModel) Init() tea.Cmd { return nil }
+func (m Model) Init() tea.Cmd { return nil }
 
-func (e EndRoundModel) Update(msg tea.Msg) (EndRoundModel, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
-	case EndReasondMsg:
-		e.msg = msg.reason
-		e.options = []EndGameMsg{Continue, Quit}
-		if msg.isOver {
-			e.options = []EndGameMsg{Restart, Quit}
-		}
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, e.keyMap.Right):
-			e.setCurrentOption(1)
-		case key.Matches(msg, e.keyMap.Left):
-			e.setCurrentOption(-1)
-		case key.Matches(msg, e.keyMap.Select):
-			return e, OnEndGameMsg(e.options[e.currentOption])
+		case key.Matches(msg, m.keyMap.Right):
+			m.setCurrentOption(1)
+		case key.Matches(msg, m.keyMap.Left):
+			m.setCurrentOption(-1)
+		case key.Matches(msg, m.keyMap.Select):
+			return m, OnEndGameMsg(m.options[m.currentOption])
 		}
 	}
-	return e, nil
+	return m, nil
 }
 
-func (e EndRoundModel) View() string {
+func (m Model) View() string {
 	var s strings.Builder
-	s.WriteString("Continue?")
+	s.WriteString(m.msg)
 	tools.NewLine(&s)
 	var opt []string
-	for i := 0; i < len(e.options); i++ {
-		style := e.style.Inactive
-		if i == e.currentOption {
-			style = e.style.Active
+	for i := 0; i < len(m.options); i++ {
+		style := m.style.Inactive
+		if i == m.currentOption {
+			style = m.style.Active
 		}
-		opt = append(opt, style.Border(lipgloss.NormalBorder()).Render(e.options[i].String()))
+		opt = append(opt, style.Border(lipgloss.NormalBorder()).Render(m.options[i].String()))
 	}
 	s.WriteString(lipgloss.JoinHorizontal(lipgloss.Center, opt...))
-	return style.SpaceBox(string(e.msg), s.String(), lipgloss.Center)
+	return style.SpaceBox(title, s.String(), lipgloss.Center)
 }
 
-type EndRoundStyle struct {
+type EndGameStyle struct {
 	Inactive lipgloss.Style
 	Active   lipgloss.Style
 }
 
-func NewEndRound() EndRoundModel {
-	return EndRoundModel{
-		msg:           "",
+func NewModel(cfg Config) Model {
+	return Model{
+		msg:           cfg.Msg,
 		keyMap:        keymap.DefaultKeyMap(),
 		currentOption: 0,
-		options:       []EndGameMsg{Continue, Quit},
-		style: EndRoundStyle{
+		options:       []EndGameMsg{Restart, Quit},
+		style: EndGameStyle{
 			Inactive: style.RootStyle.Foreground(style.Indigo),
 			Active:   style.RootStyle.Foreground(style.NeonPink).Bold(true),
 		},
