@@ -1,0 +1,157 @@
+{
+    "models": [
+        {
+            "type": "story",
+            "config": {
+                "type": "text",
+                "text": "La pluie acide battait le pavé, reflétant les néons vifs qui parsemaient les rues crasseuses de Nexus City.\nUne métropole tentaculaire où les riches s'élevaient dans des tours de verre, tandis que les pauvres s'enfonçaient dans les souterrains infestés de débris numériques.\nZero, un inconnu fraîchement débarqué dans la ville, fixait l'horizon métallique, ses yeux cybernétiques captant chaque détail.\nIl n'avait ni passé, ni histoire. Tout ce qu'il voulait, c'était se faire un nom.\nDans ce monde où la réputation était la monnaie d'échange la plus précieuse, Zero savait qu'il n'aurait qu'une seule chance de gravir les échelons.\n\nArmé de son seul talent pour le piratage et ses implants, il se jura de conquérir la ville.\nDans les ombres des mégacorporations et des gangs, il y avait des secrets à voler, des alliances à briser, et des systèmes à renverser.\nÀ Nexus City, tout pouvait être contrôlé, tout pouvait être manipulé — même la destinée."
+            }
+        },
+        {
+            "type": "story",
+            "config": {
+                "type": "chat",
+                "chat": [
+                    {
+                        "name": "vex",
+                        "text": "T'es qui? J'ai pas l'habitude de parler aux inconnus."
+                    },
+                    {
+                        "name": "zero",
+                        "text": "Zero. J'suis nouveau en ville, mais je cherche du travail. J'ai entendu dire que t'avais des missions à offrir."
+                    },
+                    {
+                        "name": "vex",
+                        "text": "Zero, hein? J'en ai vu des types comme toi. Des petits malins qui débarquent ici en pensant qu'ils vont s'faire un nom du jour au lendemain. Sauf que la plupart finissent dans une ruelle, face contre le béton, sans avoir compris ce qui leur est arrivé."
+                    },
+                    {
+                        "name": "zero",
+                        "text": "Je suis pas comme eux. Si tu me files une mission, je te prouve ce que je vaux."
+                    },
+                    {
+                        "name": "vex",
+                        "text": "C'est ça que tu veux, hein? Un boulot. Mais moi, j'suis pas du genre à filer du taf au premier venu. Tu pourrais bosser pour mes ennemis ou pire... pour les corpos. T'es peut-être un flic."
+                    },
+                    {
+                        "name": "zero",
+                        "text": "Si j'étais un flic, tu penses vraiment que je me pointerais ici, à découvert? Je veux juste des creds, et je suis prêt à bosser."
+                    },
+                    {
+                        "name": "vex",
+                        "text": "Ouais, c'est ça qu'ils disent tous. Bon... supposons que tu sois clean. J'ai peut-être un truc pour toi. Un petit job. Pas grand-chose, mais si tu fais l'affaire, on verra pour plus gros."
+                    },
+                    {
+                        "name": "zero",
+                        "text": "Je t'écoute."
+                    },
+                    {
+                        "name": "vex",
+                        "text": "Une boîte nommée ChromePulse. Ils font des implants bon marché pour ceux qui peuvent pas s'payer du Militech ou du Arasaka. Rien d'énorme, mais y'a un marché pour leurs trucs. Leur dernier joujou, c'est un implant auditif. T'as qu'à aller là-bas, me ramener les plans, et choper quelques infos sur leurs clients."
+                    },
+                    {
+                        "name": "zero",
+                        "text": "C'est tout? Pas de gros systèmes de sécurité?"
+                    },
+                    {
+                        "name": "vex",
+                        "text": "T'attends quoi? Un tapis rouge? C'est pas un job de corpo, gamin. Y'aura des mercenaires sous-payés et deux ou trois drones pour surveiller le coin. Fais pas de bruit, récupère les données, et dégage avant qu'ils remarquent quoi que ce soit."
+                    },
+                    {
+                        "name": "zero",
+                        "text": "Je peux faire ça."
+                    },
+                    {
+                        "name": "vex",
+                        "text": "On verra bien. Si tu plantes, t'auras plus jamais besoin de repasser ici. Mais si tu réussis... peut-être qu'on pourra reparler affaires. Mais crois-moi, les prochains jobs seront pas aussi faciles."
+                    },
+                    {
+                        "name": "zero",
+                        "text": "J'suis pas venu pour des jobs faciles."
+                    },
+                    {
+                        "name": "vex",
+                        "text": "Bon, t'as du cran, j'te l'accorde. Mais Nexus a l'habitude de broyer les crânes d'ceux qui pensent être invincibles. Bonne chance, Zero. T'en auras besoin."
+                    }
+                ]
+            }
+        },
+        {
+            "type": "story",
+            "config": {
+                "type": "text",
+                "text": "Le bâtiment de ChromePulse semble modeste de l'extérieur, mais c'est ce genre d'endroit qui cache des pièges inattendus.\nLa première étape est simple: couper les alarmes. Tout doit rester sous le radar."
+            }
+        },
+        {
+            "type": "breach",
+            "config": {
+                "matrix": 5,
+                "buffer": 8,
+                "timer": 40,
+                "sequences": [
+                    {
+                        "size": 3,
+                        "description": "Coupure des alarmes extérieures",
+                        "points": 30
+                    }
+                ]
+            }
+        },
+        {
+            "type": "story",
+            "config": {
+                "type": "text",
+                "text": "Les alarmes sont muettes, mais une caméra t'a repéré. Des gardes s'approchent. T'as quelques secondes pour éteindre la caméra et te cacher!"
+            }
+        },
+        {
+            "type": "breach",
+            "config": {
+                "matrix": 4,
+                "buffer": 8,
+                "timer": 15,
+                "sequences": [
+                    {
+                        "size": 3,
+                        "description": "Éteindre la caméra",
+                        "points": 30
+                    }
+                ]
+            }
+        },
+        {
+            "type": "story",
+            "config": {
+                "type": "text",
+                "text": "T'y es presque! Juste quelques clics de plus et ces plans sont à toi. Mais les serveurs de ChromePulse sont mieux protégés que prévu. Si tu veux repartir vivant avec les données, t'as intérêt de rester concentré."
+            }
+        },
+        {
+            "type": "breach",
+            "config": {
+                "matrix": 6,
+                "buffer": 10,
+                "timer": 30,
+                "sequences": [
+                    {
+                        "size": 5,
+                        "description": "Voler les données de l'implant",
+                        "points": 30
+                    },
+                    {
+                        "size": 6,
+                        "description": "Pirater les comptes bancaires",
+                        "points": 100
+                    }
+                ]
+            }
+        },
+        {
+            "type": "story",
+            "config": {
+                "type": "text",
+                "text": "Mission accomplie, mais ça n'a pas été aussi propre que prévu. Maintenant que t'as les plans, ChromePulse va enquêter. Tu devrais te faire discret un moment, au cas où ils décident de contre-attaquer."
+            }
+        }
+    ]
+}

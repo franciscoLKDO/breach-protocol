@@ -1,8 +1,9 @@
 package game
 
 import (
+	"encoding/json"
 	"fmt"
-	"time"
+	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/franciscolkdo/breach-protocol/game/breach"
@@ -10,87 +11,63 @@ import (
 	"github.com/franciscolkdo/breach-protocol/game/story"
 )
 
-type ModelConfig interface{}
+type model string
+
+const (
+	breachModel model = "breach"
+	storyModel  model = "story"
+	endModel    model = "end"
+)
+
+type ModelConfig struct {
+	Type   model           `json:"type"`
+	Config json.RawMessage `json:"config"`
+}
 
 type Config struct {
-	Models []ModelConfig
+	Models []ModelConfig `json:"models"`
 }
 
 func (c Config) LoadModel(idx int) (tea.Model, error) {
-	if idx < 0 || idx > len(c.Models) {
+	if idx < 0 || idx > len(c.Models)-1 {
 		return nil, fmt.Errorf("index out of range")
 	}
 	mc := c.Models[idx]
-	switch cfg := mc.(type) {
-	case breach.Config:
+
+	switch mc.Type {
+	case breachModel:
+		var cfg breach.Config
+		if err := json.Unmarshal(mc.Config, &cfg); err != nil {
+			return nil, fmt.Errorf("error on loading config: %s", err)
+		}
 		return breach.NewModel(cfg), nil
-	case story.Config:
+	case storyModel:
+		var cfg story.Config
+		if err := json.Unmarshal(mc.Config, &cfg); err != nil {
+			return nil, fmt.Errorf("error on loading config: %s", err)
+		}
 		return story.NewModel(cfg), nil
-	case end.Config:
+	case endModel:
+		var cfg end.Config
+		if err := json.Unmarshal(mc.Config, &cfg); err != nil {
+			return nil, fmt.Errorf("error on loading config: %s", err)
+		}
 		return end.NewModel(cfg), nil
 	default:
-		return nil, fmt.Errorf("Model not found for config: %s", cfg)
+		return nil, fmt.Errorf("model not found for config: %s", mc.Type)
 	}
 }
 
-var DefaultConfig = Config{
-	Models: []ModelConfig{
-		story.Config{
-			Text: story.Intro(),
-		},
-		story.Config{
-			Text: story.FirstMission(),
-		},
-		breach.Config{
-			Matrix: 7,
-			Buffer: 10,
-			Timer:  40 * time.Second,
-			Sequences: []breach.SequenceConfig{
-				{
-					Size:        3,
-					Description: "Avoid firewall detection",
-					Points:      10,
-				},
-				{
-					Size:        5,
-					Description: "Decrypt encrypted files",
-					Points:      30,
-				},
-				{
-					Size:        10,
-					Description: "Break Netrunner ice",
-					Points:      70,
-				},
-			},
-		},
-		breach.Config{
-			Matrix: 3,
-			Buffer: 5,
-			Timer:  40 * time.Second,
-			Sequences: []breach.SequenceConfig{
-				{
-					Size:        3,
-					Description: "Lock out intruders",
-					Points:      30,
-				},
-			},
-		},
-		breach.Config{
-			Matrix: 5,
-			Buffer: 8,
-			Timer:  40 * time.Second,
-			Sequences: []breach.SequenceConfig{
-				{
-					Size:        5,
-					Description: "Find Mikoshi source code",
-					Points:      30,
-				},
-				{
-					Size:        6,
-					Description: "Escape Arasaka Netrunners",
-					Points:      50,
-				},
-			},
-		},
-	},
+// NewGameConfig
+func ReadConfigFile(path string) (Config, error) {
+	var cfg Config
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return Config{}, fmt.Errorf("error on loading config file: %s", err)
+	}
+	err = json.Unmarshal(data, &cfg)
+	if err != nil {
+		return Config{}, fmt.Errorf("error on unmarshal config data: %s", err)
+	}
+	return cfg, nil
 }

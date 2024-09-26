@@ -44,10 +44,14 @@ func (m Model) Init() tea.Cmd {
 
 func (m *Model) LoadModel() tea.Cmd {
 	var err error
-	m.current, err = m.cfg.LoadModel(m.currentIdx)
-	if err != nil {
-		//TODO handle in case of error
-		return tea.Quit
+	if m.currentIdx > len(m.cfg.Models)-1 {
+		m.current = end.NewModel(end.Config{Msg: "Félicitations tu as réussi!"})
+	} else {
+		m.current, err = m.cfg.LoadModel(m.currentIdx)
+		if err != nil {
+			//TODO handle in case of error
+			return tea.Quit
+		}
 	}
 	return m.current.Init()
 }
@@ -63,8 +67,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if !m.ready {
 			m.viewport = viewport.New(msg.Width, msg.Height-(3*titleHeight))
 			m.viewport.YPosition = titleHeight
-			// m.viewport.HighPerformanceRendering = useHighPerformanceRenderer
-			m.viewport.SetContent(m.current.View())
 			m.ready = true
 			m.viewport.YPosition = titleHeight + 1
 		} else {
@@ -111,7 +113,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	m.viewport.SetContent(m.center(m.current.View()))
-	// fmt.Println("hello Y is: ", m.viewport.TotalLineCount())
+
 	return m, tea.Batch(cmds...)
 }
 

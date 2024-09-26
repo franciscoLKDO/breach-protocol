@@ -4,6 +4,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
+
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/franciscolkdo/breach-protocol/game"
 	"github.com/spf13/cobra"
@@ -20,9 +22,13 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		g := game.NewGame(game.DefaultConfig)
+		cfg, err := game.ReadConfigFile("./config/game.json")
+		if err != nil {
+			return fmt.Errorf("error on reading config file: %s", err)
+		}
+		g := game.NewGame(cfg)
 
-		_, err := tea.NewProgram(g, tea.WithMouseCellMotion()).Run()
+		_, err = tea.NewProgram(g, tea.WithMouseCellMotion()).Run()
 		if err != nil {
 			return err
 		}

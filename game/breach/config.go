@@ -4,7 +4,6 @@ import "time"
 
 type SequenceConfig struct {
 	Description string
-	Points      int
 	Size        int
 }
 
@@ -23,17 +22,14 @@ var DefaultConfig = Config{
 		{
 			Size:        3,
 			Description: "Extract sensitive data",
-			Points:      10,
 		},
 		{
 			Size:        5,
 			Description: "Steal user credentials",
-			Points:      30,
 		},
 		{
 			Size:        6,
 			Description: "Corrupt database records",
-			Points:      50,
 		},
 	},
 }

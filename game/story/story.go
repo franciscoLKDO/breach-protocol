@@ -2,7 +2,6 @@ package story
 
 import (
 	"io"
-	"strings"
 	"time"
 	"unicode"
 
@@ -84,7 +83,7 @@ func (m Model) View() string {
 // NewModel return a breach model instance
 func NewModel(cfg Config) Model {
 	return Model{
-		text:    strings.NewReader(cfg.Text),
+		text:    cfg.newReader(),
 		isended: false,
 		keyMap:  keymap.DefaultKeyMap(),
 		ticker:  time.NewTicker(30 * time.Millisecond),

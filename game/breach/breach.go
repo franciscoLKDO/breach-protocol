@@ -181,7 +181,7 @@ func NewModel(cfg Config) Model {
 		buffer:    NewBuffer(cfg.Buffer),
 		sequences: NewSequences(cfg.Sequences),
 
-		timer:  timer.NewWithInterval(cfg.Timer, time.Second),
+		timer:  timer.NewWithInterval(cfg.Timer*time.Second, time.Second),
 		keyMap: keymap.DefaultKeyMap(),
 	}
 }
