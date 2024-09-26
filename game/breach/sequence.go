@@ -5,6 +5,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/franciscolkdo/breach-protocol/game/style"
 )
 
 const seqMax = 10
@@ -20,12 +21,11 @@ const (
 type SequenceStatusMsg struct {
 	Id     int
 	Status SequenceStatus
-	Points int
 }
 
-func OnSequenceStatusMsg(id int, status SequenceStatus, points int) tea.Cmd {
+func OnSequenceStatusMsg(id int, status SequenceStatus) tea.Cmd {
 	return func() tea.Msg {
-		return SequenceStatusMsg{Id: id, Status: status, Points: points}
+		return SequenceStatusMsg{Id: id, Status: status}
 	}
 }
 
@@ -57,7 +57,7 @@ func (s *Sequence) VerifySymbol(sym Symbol) tea.Cmd {
 	}
 	if s.x >= len(s.data) {
 		s.status = SequenceSuccess
-		return OnSequenceStatusMsg(s.Id, SequenceSuccess, s.points)
+		return OnSequenceStatusMsg(s.Id, SequenceSuccess)
 	}
 	return nil
 }
@@ -69,7 +69,7 @@ func (s Sequence) Update(msg tea.Msg) (Sequence, tea.Cmd) {
 	case BufferTooSmallMsg:
 		if msg.Id == s.Id {
 			s.status = SequenceFailed
-			return s, OnSequenceStatusMsg(s.Id, SequenceFailed, 0)
+			return s, OnSequenceStatusMsg(s.Id, SequenceFailed)
 		}
 	case SymbolMsg:
 		if msg.selected {
@@ -81,7 +81,7 @@ func (s Sequence) Update(msg tea.Msg) (Sequence, tea.Cmd) {
 
 func (s Sequence) View() string {
 	var res strings.Builder
-	alignDesc := RootStyle.Render(strings.Repeat("   ", seqMax-len(s.data)))
+	alignDesc := style.RootStyle.Render(strings.Repeat("   ", seqMax-len(s.data)))
 	if s.status == SequenceRunning {
 		for i, sym := range s.data {
 			if i < s.x {
@@ -91,9 +91,9 @@ func (s Sequence) View() string {
 			} else {
 				res.WriteString(s.style.NextSymbol.Render(sym.String()))
 			}
-			res.WriteString(RootStyle.Render(" "))
+			res.WriteString(style.RootStyle.Render(" "))
 		}
-		res.WriteString(alignDesc + RootStyle.Render(s.description))
+		res.WriteString(alignDesc + style.RootStyle.Render(s.description))
 	} else {
 		style := s.style.Success
 		if s.status == SequenceFailed {
@@ -122,13 +122,12 @@ func NewSequence(cfg SequenceConfig, id int) Sequence {
 		x:           0,
 		status:      SequenceRunning,
 		description: cfg.Description,
-		points:      cfg.Points,
 		style: SequenceStyle{
-			CurrentSymbol:   RootStyle.Foreground(NeonPink).Bold(true),
-			ValidatedSymbol: RootStyle.Foreground(LimeGreen),
-			NextSymbol:      RootStyle.Foreground(NeonCyan),
-			Failed:          RootStyle.Foreground(DarkRed).Bold(true),
-			Success:         RootStyle.Foreground(VividGreen).Bold(true),
+			CurrentSymbol:   style.RootStyle.Foreground(style.NeonPink).Bold(true),
+			ValidatedSymbol: style.RootStyle.Foreground(style.LimeGreen),
+			NextSymbol:      style.RootStyle.Foreground(style.NeonCyan),
+			Failed:          style.RootStyle.Foreground(style.DarkRed).Bold(true),
+			Success:         style.RootStyle.Foreground(style.VividGreen).Bold(true),
 		},
 	}
 }

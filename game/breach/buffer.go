@@ -5,10 +5,15 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/franciscolkdo/breach-protocol/game/style"
 )
 
-const BufferIsFull EndReason = "Buffer is full"
-const NotEnoughSpace EndReason = "Not enough space to complete sequence"
+const bufferTitle = "Buffer"
+
+const (
+	BufferIsFull   = "Buffer is full"
+	NotEnoughSpace = "Not enough space to complete sequence"
+)
 
 type BufferSizeMsg int
 
@@ -25,7 +30,7 @@ type Buffer struct {
 	style  BufferStyle
 }
 
-func (b Buffer) Last() int { return len(b.data) - b.x }
+func (b Buffer) GetEmptySize() int { return len(b.data) - b.x }
 
 func (b *Buffer) SetCurrentSymbol(sym Symbol) {
 	b.data[b.x] = sym
@@ -37,7 +42,7 @@ func (b Buffer) UseBufferBlock() (Buffer, tea.Cmd) {
 	} else {
 		b.isFull = true
 	}
-	return b, OnBufferSizeMsg(b.Last())
+	return b, OnBufferSizeMsg(b.GetEmptySize())
 }
 
 func (b Buffer) Init() tea.Cmd { return nil }
@@ -71,7 +76,7 @@ func (b Buffer) View() string {
 		buf.WriteString(b.style.Selected.Render("]"))
 	}
 
-	return SpaceBox("Buffer", RootStyle.Padding(0, 0).Render(buf.String()), lipgloss.Center)
+	return style.SpaceBox(bufferTitle, style.RootStyle.Padding(0, 0).Render(buf.String()), lipgloss.Center)
 }
 
 type BufferStyle struct {
@@ -85,8 +90,8 @@ func NewBuffer(size int) Buffer {
 		x:      0,
 		isFull: false,
 		style: BufferStyle{
-			Current:  RootStyle.Foreground(NeonPink).Bold(true),
-			Selected: RootStyle.Foreground(LimeGreen),
+			Current:  style.RootStyle.Foreground(style.NeonPink).Bold(true),
+			Selected: style.RootStyle.Foreground(style.LimeGreen),
 		},
 	}
 }

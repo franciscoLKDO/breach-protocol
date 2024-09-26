@@ -13,13 +13,13 @@ func _() {
 	_ = x[XE9-2]
 	_ = x[X7A-3]
 	_ = x[X1C-4]
-	_ = x[end-5]
+	_ = x[delim_end-5]
 	_ = x[XXX-6]
 }
 
-const _Symbol_name = "55BDE97A1CendXX"
+const _Symbol_name = "55BDE97A1Cdelim_endXX"
 
-var _Symbol_index = [...]uint8{0, 2, 4, 6, 8, 10, 13, 15}
+var _Symbol_index = [...]uint8{0, 2, 4, 6, 8, 10, 19, 21}
 
 func (i Symbol) String() string {
 	if i < 0 || i >= Symbol(len(_Symbol_index)-1) {

@@ -4,12 +4,6 @@ Breach Protocol is a terminal UI game inspired by the hacking minigame from Cybe
 
 ![Breach Protocol](./images/banner.jpg)
 
-## Screenshots
-
-![Gameplay Screenshot 1](./screenshots/screenshot1.png)
-![Gameplay Screenshot 2](./screenshots/screenshot2.png)
-![Gameplay Screenshot 3](./screenshots/screenshot3.png)
-
 ## Features
 
 - **Terminal UI**: Immerse yourself in a cyberpunk world right from your terminal, based on [Charm](https://charm.sh).
