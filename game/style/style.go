@@ -18,3 +18,4 @@ const (
 )
 
 var RootStyle = lipgloss.NewStyle().Background(DarkGray)
+var BoldStyle = lipgloss.NewStyle().Inherit(RootStyle).Bold(true)

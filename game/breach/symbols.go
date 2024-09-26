@@ -36,14 +36,7 @@ func OnSymbol(symbol Symbol, selected bool) tea.Cmd {
 func newSymbols(size int) []Symbol {
 	s := make([]Symbol, size)
 	for i := 0; i < len(s); i++ {
-		s[i] = Symbol(rand.Intn(int(delim_end))) // Symbols "end" and "XXX" does not count
+		s[i] = Symbol(rand.Intn(int(delim_end))) // Symbols "delim_end" and "XXX" does not count
 	}
 	return s
 }
-
-type Axe int
-
-const (
-	X Axe = iota
-	Y
-)

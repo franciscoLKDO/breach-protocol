@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/franciscolkdo/breach-protocol/game/end"
@@ -21,7 +22,7 @@ const (
 	EndRound
 )
 
-const marginBottom = 5
+// const marginBottom = 5
 const AppName = "Breach Protocol"
 const footerName = "Bartmoss Team"
 
@@ -30,21 +31,15 @@ type Model struct {
 	currentIdx int
 	current    tea.Model
 
-	keyMap  keymap.KeyMap
-	askQuit bool
-	Width   int
-	Height  int
+	keyMap   keymap.KeyMap
+	ready    bool
+	viewport viewport.Model
+	askQuit  bool
 }
 
 // Init initializes the BreachModel.
 func (m Model) Init() tea.Cmd {
 	return tea.Sequence(tea.SetWindowTitle(AppName), m.current.Init())
-}
-
-// SetSize resize the window.
-func (m *Model) SetSize(msg tea.WindowSizeMsg) {
-	m.Height = msg.Height - marginBottom
-	m.Width = msg.Width
 }
 
 func (m *Model) LoadModel() tea.Cmd {
@@ -59,33 +54,47 @@ func (m *Model) LoadModel() tea.Cmd {
 
 // Update handle messages for BreachModel.
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	cmds := []tea.Cmd{}
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
 	// Resize window
 	case tea.WindowSizeMsg:
-		m.SetSize(msg)
-		m.current, cmd = m.current.Update(msg)
-		return m, cmd
+		titleHeight := lipgloss.Height(m.titleView(""))
+		if !m.ready {
+			m.viewport = viewport.New(msg.Width, msg.Height-(3*titleHeight))
+			m.viewport.YPosition = titleHeight
+			// m.viewport.HighPerformanceRendering = useHighPerformanceRenderer
+			m.viewport.SetContent(m.current.View())
+			m.ready = true
+			m.viewport.YPosition = titleHeight + 1
+		} else {
+			m.viewport.Width = msg.Width
+			m.viewport.Height = msg.Height - (3 * titleHeight)
+		}
+		m.viewport, cmd = m.viewport.Update(msg)
+		cmds = append(cmds, cmd)
 	// Quit msg
 	case tea.QuitMsg:
 		m.askQuit = true
-		return m, tea.Quit
+		cmds = append(cmds, tea.Quit)
 	// Handle key strokes and send them to current model
 	case tea.KeyMsg:
 		if key.Matches(msg, m.keyMap.Quit) {
-			cmd = tea.Quit
+			cmds = append(cmds, tea.Quit)
 		} else {
 			m.current, cmd = m.current.Update(msg)
+			cmds = append(cmds, cmd)
+			m.viewport, cmd = m.viewport.Update(msg)
+			cmds = append(cmds, cmd)
 		}
-		return m, cmd
 	// EndModelMsg return the state of current model, show end game if failed or next one on success
 	case message.EndModelMsg:
 		if msg.Status == message.Failed {
 			m.current = end.NewModel(end.Config{Msg: msg.Msg})
-			return m, m.current.Init()
+			cmds = append(cmds, m.current.Init())
 		} else {
 			m.currentIdx++
-			return m, m.LoadModel()
+			cmds = append(cmds, m.LoadModel())
 		}
 	// EndGame return Restart or Quit, set currentIdx=0 on restart
 	case end.EndGameMsg:
@@ -93,13 +102,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		} else {
 			m.currentIdx = 0
-			return m, m.LoadModel()
+			cmds = append(cmds, m.LoadModel())
 		}
 	// Pass all messages not already handled (internal msg for current model)
 	default:
 		m.current, cmd = m.current.Update(msg)
-		return m, cmd
+		cmds = append(cmds, cmd)
 	}
+
+	m.viewport.SetContent(m.center(m.current.View()))
+	// fmt.Println("hello Y is: ", m.viewport.TotalLineCount())
+	return m, tea.Batch(cmds...)
 }
 
 // View update console on each update
@@ -111,7 +124,7 @@ func (m Model) View() string {
 
 	// Set current Model view
 	tools.NewLine(&s)
-	s.WriteString(m.center(m.current.View()))
+	s.WriteString(m.viewport.View())
 
 	// Set Footer
 	tools.NewLine(&s)
@@ -121,7 +134,7 @@ func (m Model) View() string {
 }
 
 func (m Model) center(content string) string {
-	return lipgloss.Place(m.Width, lipgloss.Height(content), lipgloss.Center, lipgloss.Center, content, lipgloss.WithWhitespaceBackground(style.DarkGray))
+	return lipgloss.Place(m.viewport.Width, lipgloss.Height(content), lipgloss.Center, lipgloss.Center, content, lipgloss.WithWhitespaceBackground(style.DarkGray))
 }
 
 // titleView return the header or footer views of breach protocol
@@ -130,10 +143,10 @@ func (m Model) titleView(content string) string {
 	border.Right = "╠"
 	border.Left = "╣"
 	title := gameStyle.Title.BorderForeground(style.MetallicGold).Bold(true).BorderStyle(border).Padding(0, 2).Render(content)
-	line := gameStyle.Title.Render(strings.Repeat("═", max(0, (m.Width/2)-(lipgloss.Width(title)/2))))
+	line := gameStyle.Title.Render(strings.Repeat("═", max(0, (m.viewport.Width/2)-(lipgloss.Width(title)/2))))
 
 	// Workaround to force background black after a border rendering
-	afterline := lipgloss.Place(m.Width, lipgloss.Height(title), lipgloss.Left, lipgloss.Center, line, lipgloss.WithWhitespaceBackground(style.DarkGray))
+	afterline := lipgloss.Place(m.viewport.Width, lipgloss.Height(title), lipgloss.Left, lipgloss.Center, line, lipgloss.WithWhitespaceBackground(style.DarkGray))
 	return lipgloss.JoinHorizontal(lipgloss.Center, line, title, afterline)
 }
 
@@ -149,6 +162,7 @@ var gameStyle = GameStyle{
 func NewGame(cfg Config) Model {
 	g := Model{
 		cfg:        cfg,
+		ready:      false,
 		askQuit:    false,
 		currentIdx: 0,
 		keyMap:     keymap.DefaultKeyMap(),

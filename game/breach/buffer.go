@@ -30,7 +30,7 @@ type Buffer struct {
 	style  BufferStyle
 }
 
-func (b Buffer) Last() int { return len(b.data) - b.x }
+func (b Buffer) GetEmptySize() int { return len(b.data) - b.x }
 
 func (b *Buffer) SetCurrentSymbol(sym Symbol) {
 	b.data[b.x] = sym
@@ -42,7 +42,7 @@ func (b Buffer) UseBufferBlock() (Buffer, tea.Cmd) {
 	} else {
 		b.isFull = true
 	}
-	return b, OnBufferSizeMsg(b.Last())
+	return b, OnBufferSizeMsg(b.GetEmptySize())
 }
 
 func (b Buffer) Init() tea.Cmd { return nil }

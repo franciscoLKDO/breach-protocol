@@ -11,6 +11,15 @@ import (
 	"github.com/franciscolkdo/breach-protocol/tools"
 )
 
+type Axe int
+
+const (
+	X Axe = iota
+	Y
+)
+
+const matrixTitle = "Code Matrix"
+
 type MatrixModel struct {
 	data   [][]Symbol
 	x      int
@@ -20,13 +29,9 @@ type MatrixModel struct {
 	style  MatrixStyle
 }
 
-func (m MatrixModel) GetData() [][]Symbol { return m.data }
-
 func (m MatrixModel) GetSymbol() Symbol { return m.data[m.y][m.x] }
 
 func (m MatrixModel) SetSymbol(s Symbol) { m.data[m.y][m.x] = s }
-
-func (m MatrixModel) GetCoordonates() (int, int) { return m.x, m.y }
 
 func (m *MatrixModel) setX(x int) {
 	m.x += x
@@ -47,16 +52,10 @@ func (m *MatrixModel) setY(y int) {
 }
 
 func (m *MatrixModel) setKeymap() {
-	x := true
-	y := false
-	if m.axe == Y {
-		x = false
-		y = true
-	}
-	m.keyMap.Left.SetEnabled(x)
-	m.keyMap.Right.SetEnabled(x)
-	m.keyMap.Down.SetEnabled(y)
-	m.keyMap.Up.SetEnabled(y)
+	m.keyMap.Left.SetEnabled(m.axe == X)
+	m.keyMap.Right.SetEnabled(m.axe == X)
+	m.keyMap.Down.SetEnabled(m.axe == Y)
+	m.keyMap.Up.SetEnabled(m.axe == Y)
 }
 
 func (m *MatrixModel) rotateAxe() {
@@ -103,34 +102,32 @@ func (m MatrixModel) Update(msg tea.Msg) (MatrixModel, tea.Cmd) {
 
 func (m MatrixModel) View() string {
 	var s strings.Builder
-	data := m.GetData()
-	x, y := m.GetCoordonates()
-	for i, symbols := range data {
+	for i, symbols := range m.data {
 		for j, sym := range symbols {
 			msg := sym.String()
 			if sym == XXX {
 				msg = "  "
 			}
 			switch true {
-			case j == x && i == y:
+			case j == m.x && i == m.y:
 				if sym == XXX {
 					msg = "__"
 				}
 				s.WriteString(m.style.CurrentSymbol.Render(msg))
-			case j == x && m.axe == Y:
+			case j == m.x && m.axe == Y:
 				s.WriteString(m.style.CurrentAxe.Render(msg))
-			case i == y && m.axe == X:
+			case i == m.y && m.axe == X:
 				s.WriteString(m.style.CurrentAxe.Render(msg))
 			default:
 				s.WriteString(m.style.InactiveSymbol.Render(msg))
 			}
 			s.WriteString(style.RootStyle.Render(" "))
 		}
-		if i < len(data)-1 {
+		if i < len(m.data)-1 {
 			tools.NewLine(&s)
 		}
 	}
-	return style.SpaceBox("Code Matrix", s.String(), lipgloss.Center)
+	return style.SpaceBox(matrixTitle, s.String(), lipgloss.Center)
 }
 
 type MatrixStyle struct {

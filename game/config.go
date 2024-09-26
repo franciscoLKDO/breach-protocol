@@ -8,7 +8,6 @@ import (
 	"github.com/franciscolkdo/breach-protocol/game/breach"
 	"github.com/franciscolkdo/breach-protocol/game/end"
 	"github.com/franciscolkdo/breach-protocol/game/story"
-	"github.com/franciscolkdo/breach-protocol/game/style"
 )
 
 type ModelConfig interface{}
@@ -37,7 +36,10 @@ func (c Config) LoadModel(idx int) (tea.Model, error) {
 var DefaultConfig = Config{
 	Models: []ModelConfig{
 		story.Config{
-			Text: style.RootStyle.Bold(true).Render("Knock Knock NEO,\nFollow the White Rabbit"),
+			Text: story.Intro(),
+		},
+		story.Config{
+			Text: story.FirstMission(),
 		},
 		breach.Config{
 			Matrix: 7,
@@ -56,7 +58,7 @@ var DefaultConfig = Config{
 				},
 				{
 					Size:        10,
-					Description: "Burn Netrunner ice",
+					Description: "Break Netrunner ice",
 					Points:      70,
 				},
 			},
