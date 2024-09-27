@@ -38,6 +38,7 @@ FROM ${PROD_IMAGE} as prod
 
 COPY --from=base /etc/passwd-prod /etc/passwd
 COPY --from=builder /breach-protocol /breach-protocol
+COPY --from=builder /app/config/game.json /config/game.json
 
 ARG USER_UID=user
 ARG APP_VERSION

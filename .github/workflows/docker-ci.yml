@@ -1,0 +1,68 @@
+name: docker-CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  DOCKER_IMAGE: ${{ vars.DOCKERHUB_USERNAME }}/${{ vars.APP_NAME }}
+  DOCKER_TAG_CI: ci
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+  
+    - name: Set variables
+      shell: bash
+      run:  |
+        GIT_COMMIT=$(echo ${{ github.sha }} | cut -c 1-6)
+        echo "GIT_COMMIT=${GIT_COMMIT}" >> $GITHUB_ENV
+
+    - name: Build test image
+      uses: docker/build-push-action@v6
+      with:
+        push: false
+        tags: "${{env.DOCKER_IMAGE}}:${{ env.DOCKER_TAG_CI }}"
+        target: test
+    
+    # TODO: ADD tests
+    # - name: Test application in container
+    #   run: |
+    #     CONTAINER=${{vars.APP_NAME}}-test
+    #     docker run --name ${CONTAINER} ${{env.DOCKER_IMAGE}}:${{ env.DOCKER_TAG_CI }} make test
+    #     docker cp ${CONTAINER}:/app/test/results `pwd`/test/results
+    #     docker rm ${CONTAINER}
+
+    # - name: Upload results to Codecov
+    #   uses: codecov/codecov-action@v4
+    #   with:
+    #     token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Lint application in container
+      run: docker run --rm ${{env.DOCKER_IMAGE}}:${{ env.DOCKER_TAG_CI }} make lint
+
+    - name: Get current app version
+      if: ${{ github.event_name == 'push' && github.ref_name == 'master' }}
+      run: echo "APP_VERSION=$(docker run --rm ${{env.DOCKER_IMAGE}}:${{ env.DOCKER_TAG_CI }} make version)" >> $GITHUB_ENV 
+
+    - name: Login to DockerHub
+      if: ${{ github.event_name == 'push' && github.ref_name == 'master' }}
+      uses: docker/login-action@v1
+      with:
+        username: ${{ vars.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Post image to DockerHub
+      if: ${{ github.event_name == 'push' && github.ref_name == 'master' }}
+      uses: docker/build-push-action@v6
+      with:
+        push: true
+        tags: "${{env.DOCKER_IMAGE}}:${{ env.APP_VERSION }}-dev-${{ env.GIT_COMMIT }}"
+        build-args: |
+          COMMIT_ID=${{ env.GIT_COMMIT }}
+          APP_VERSION=${{ env.APP_VERSION }}
