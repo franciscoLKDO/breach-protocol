@@ -32,7 +32,7 @@ USER ${USER_UID}
 FROM base as builder
 ARG ARCH=amd64
 ARG APP_VERSION
-RUN GOARCH=${ARCH} go build -ldflags="-w -s ${APP_VERSION:+-X github.com/franciscolkdo/guntar/cmd.Version=${APP_VERSION}}" -o /breach-protocol
+RUN GOARCH=${ARCH} go build -ldflags="-w -s ${APP_VERSION:+-X github.com/franciscolkdo/breach-protocol/cmd.Version=${APP_VERSION}}" -o /breach-protocol
 
 FROM ${PROD_IMAGE} as prod
 
