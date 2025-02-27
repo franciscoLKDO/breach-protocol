@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/franciscolkdo/breach-protocol/config"
 	"github.com/franciscolkdo/breach-protocol/game"
 	"github.com/spf13/cobra"
 )
@@ -21,7 +22,7 @@ var startCmd = &cobra.Command{
 If you want to provide a specific path for the config, use the -c option.
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		cfg, err := game.ReadConfigFile(configPath)
+		cfg, err := config.GetConfig(configPath)
 		if err != nil {
 			return fmt.Errorf("error on reading config file: %s", err)
 		}
@@ -37,6 +38,6 @@ If you want to provide a specific path for the config, use the -c option.
 }
 
 func init() {
-	startCmd.Flags().StringVarP(&configPath, "config", "c", "./config/game.json", "config file to use")
+	startCmd.Flags().StringVarP(&configPath, "config", "c", "", "config file to use")
 	rootCmd.AddCommand(startCmd)
 }

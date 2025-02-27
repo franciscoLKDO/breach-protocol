@@ -7,9 +7,10 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/franciscolkdo/breach-protocol/game/end"
+	"github.com/franciscolkdo/breach-protocol/config"
 	"github.com/franciscolkdo/breach-protocol/game/keymap"
 	"github.com/franciscolkdo/breach-protocol/game/message"
+	"github.com/franciscolkdo/breach-protocol/game/model/end"
 	"github.com/franciscolkdo/breach-protocol/game/style"
 	"github.com/franciscolkdo/breach-protocol/tools"
 )
@@ -27,7 +28,7 @@ const AppName = "Breach Protocol"
 const footerName = "Bartmoss Team"
 
 type Model struct {
-	cfg        Config
+	cfg        config.Config
 	currentIdx int
 	current    tea.Model
 
@@ -47,9 +48,8 @@ func (m *Model) LoadModel() tea.Cmd {
 	if m.currentIdx > len(m.cfg.Models)-1 {
 		m.current = end.NewModel(end.Config{Msg: "Félicitations tu as réussi!"})
 	} else {
-		m.current, err = m.cfg.LoadModel(m.currentIdx)
+		m.current, err = m.cfg.Models[m.currentIdx].Load()
 		if err != nil {
-			//TODO handle in case of error
 			return tea.Quit
 		}
 	}
@@ -161,7 +161,7 @@ var gameStyle = GameStyle{
 }
 
 // NewGame return a game model instance
-func NewGame(cfg Config) Model {
+func NewGame(cfg config.Config) Model {
 	g := Model{
 		cfg:        cfg,
 		ready:      false,
