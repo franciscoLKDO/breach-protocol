@@ -12,6 +12,8 @@ import (
 	"github.com/franciscolkdo/breach-protocol/tools"
 )
 
+var _ tea.Model = Model{}
+
 const title = "Game Over!"
 
 type EndGameMsg int
@@ -83,7 +85,7 @@ type EndGameStyle struct {
 	Active   lipgloss.Style
 }
 
-func NewModel(cfg Config) Model {
+func NewModel(cfg Config) tea.Model {
 	return Model{
 		msg:           cfg.Msg,
 		keyMap:        keymap.DefaultKeyMap(),

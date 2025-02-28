@@ -7,9 +7,9 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/franciscolkdo/breach-protocol/config"
 	"github.com/franciscolkdo/breach-protocol/game/keymap"
 	"github.com/franciscolkdo/breach-protocol/game/message"
+	"github.com/franciscolkdo/breach-protocol/game/model"
 	"github.com/franciscolkdo/breach-protocol/game/model/end"
 	"github.com/franciscolkdo/breach-protocol/game/style"
 	"github.com/franciscolkdo/breach-protocol/tools"
@@ -28,7 +28,7 @@ const AppName = "Breach Protocol"
 const footerName = "Bartmoss Team"
 
 type Model struct {
-	cfg        config.Config
+	models     []model.Config
 	currentIdx int
 	current    tea.Model
 
@@ -45,10 +45,10 @@ func (m Model) Init() tea.Cmd {
 
 func (m *Model) LoadModel() tea.Cmd {
 	var err error
-	if m.currentIdx > len(m.cfg.Models)-1 {
+	if m.currentIdx > len(m.models)-1 {
 		m.current = end.NewModel(end.Config{Msg: "Félicitations tu as réussi!"})
 	} else {
-		m.current, err = m.cfg.Models[m.currentIdx].Load()
+		m.current, err = m.models[m.currentIdx].Load()
 		if err != nil {
 			return tea.Quit
 		}
@@ -161,9 +161,9 @@ var gameStyle = GameStyle{
 }
 
 // NewGame return a game model instance
-func NewGame(cfg config.Config) Model {
+func NewGame(models []model.Config) Model {
 	g := Model{
-		cfg:        cfg,
+		models:     models,
 		ready:      false,
 		askQuit:    false,
 		currentIdx: 0,

@@ -11,6 +11,8 @@ import (
 	"github.com/franciscolkdo/breach-protocol/game/message"
 )
 
+var _ tea.Model = Model{}
+
 // Model is a model to show text story
 type Model struct {
 	text    io.RuneReader
@@ -81,7 +83,7 @@ func (m Model) View() string {
 }
 
 // NewModel return a breach model instance
-func NewModel(cfg Config) Model {
+func NewModel(cfg Config) tea.Model {
 	return Model{
 		text:    cfg.newReader(),
 		isended: false,

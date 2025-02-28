@@ -2,7 +2,6 @@ package model
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -19,8 +18,6 @@ const (
 	endModel    model = "end"
 )
 
-var ErrLoadingConfig = errors.New("error on loading config")
-
 type Config struct {
 	Type   model           `json:"type"`
 	Config json.RawMessage `json:"config"`
@@ -29,24 +26,20 @@ type Config struct {
 func (m Config) Load() (tea.Model, error) {
 	switch m.Type {
 	case breachModel:
-		var cfg breach.Config
-		if err := json.Unmarshal(m.Config, &cfg); err != nil {
-			return nil, fmt.Errorf("%w: %w", ErrLoadingConfig, err)
-		}
-		return breach.NewModel(cfg), nil
+		return newModel(breach.NewModel, m.Config)
 	case storyModel:
-		var cfg story.Config
-		if err := json.Unmarshal(m.Config, &cfg); err != nil {
-			return nil, fmt.Errorf("%w: %w", ErrLoadingConfig, err)
-		}
-		return story.NewModel(cfg), nil
+		return newModel(story.NewModel, m.Config)
 	case endModel:
-		var cfg end.Config
-		if err := json.Unmarshal(m.Config, &cfg); err != nil {
-			return nil, fmt.Errorf("%w: %w", ErrLoadingConfig, err)
-		}
-		return end.NewModel(cfg), nil
+		return newModel(end.NewModel, m.Config)
 	default:
 		return nil, fmt.Errorf("model not found for config: %s", m.Type)
 	}
+}
+
+func newModel[T any](cb func(T) tea.Model, config json.RawMessage) (tea.Model, error) {
+	var cfg T
+	if err := json.Unmarshal(config, &cfg); err != nil {
+		return nil, fmt.Errorf("error on loading config: %w", err)
+	}
+	return cb(cfg), nil
 }

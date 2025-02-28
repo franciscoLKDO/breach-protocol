@@ -16,6 +16,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+var _ tea.Model = Model{}
+
 type BufferTooSmallMsg struct {
 	Id int
 }
@@ -175,7 +177,7 @@ func (m Model) timerView() string {
 }
 
 // NewModel return a breach model instance
-func NewModel(cfg Config) Model {
+func NewModel(cfg Config) tea.Model {
 	return Model{
 		matrix:    NewMatrix(cfg.Matrix),
 		buffer:    NewBuffer(cfg.Buffer),
