@@ -1,7 +1,7 @@
 ARG FROM_IMAGE=amd64/golang:1.20-alpine
 ARG PROD_IMAGE=scratch
 
-FROM ${FROM_IMAGE} as base
+FROM ${FROM_IMAGE} AS base
 
 ARG USER_UID=user
 
@@ -20,7 +20,7 @@ RUN go mod download && go mod verify
 # Copy repository
 COPY ./ ./
 
-FROM base as test
+FROM base AS test
 
 # Avoid permissions errors on tests
 RUN chown -R ${USER_UID}:${USER_UID} $WORKDIR
@@ -29,16 +29,15 @@ RUN make install-dev
 
 USER ${USER_UID}
 
-FROM base as builder
+FROM base AS builder
 ARG ARCH=amd64
 ARG APP_VERSION
 RUN GOARCH=${ARCH} go build -ldflags="-w -s ${APP_VERSION:+-X github.com/franciscolkdo/breach-protocol/cmd.Version=${APP_VERSION}}" -o /breach-protocol
 
-FROM ${PROD_IMAGE} as prod
+FROM ${PROD_IMAGE} AS prod
 
 COPY --from=base /etc/passwd-prod /etc/passwd
 COPY --from=builder /breach-protocol /breach-protocol
-COPY --from=builder /app/config/game.json /config/game.json
 
 ARG USER_UID=user
 ARG APP_VERSION
