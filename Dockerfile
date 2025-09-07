@@ -1,5 +1,5 @@
-ARG FROM_IMAGE=amd64/golang:1.20-alpine
-ARG PROD_IMAGE=scratch
+ARG FROM_IMAGE=amd64/golang:1.24-alpine
+ARG PROD_IMAGE=alpine:3.21
 
 FROM ${FROM_IMAGE} AS base
 
@@ -36,7 +36,7 @@ RUN GOARCH=${ARCH} go build -ldflags="-w -s ${APP_VERSION:+-X github.com/francis
 
 FROM ${PROD_IMAGE} AS prod
 
-COPY --from=base /etc/passwd-prod /etc/passwd
+# COPY --from=base /etc/passwd-prod /etc/passwd
 COPY --from=builder /breach-protocol /breach-protocol
 
 ARG USER_UID=user
@@ -48,6 +48,6 @@ ENV COMMIT_ID=${COMMIT_ID}
 # Enable colors in container
 ENV COLORTERM=truecolor
 
-USER ${USER_UID}
+# USER ${USER_UID}
 
-ENTRYPOINT [ "/breach-protocol" ]
+ENTRYPOINT [ "/breach-protocol", "ssh" ]

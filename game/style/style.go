@@ -19,3 +19,9 @@ const (
 
 var RootStyle = lipgloss.NewStyle().Background(DarkGray)
 var BoldStyle = lipgloss.NewStyle().Inherit(RootStyle).Bold(true)
+
+func SetRenderer(renderer *lipgloss.Renderer) {
+	lipgloss.SetDefaultRenderer(renderer)
+	RootStyle = renderer.NewStyle().Background(DarkGray)
+	BoldStyle = renderer.NewStyle().Inherit(RootStyle).Bold(true)
+}
