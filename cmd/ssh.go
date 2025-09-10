@@ -93,6 +93,7 @@ func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 	// use it to create the styles.
 	// The recommended way to use these styles is to then pass them down to
 	// your Bubble Tea model.
+
 	renderer := bubbletea.MakeRenderer(s)
 	style.SetRenderer(renderer)
 
@@ -100,7 +101,7 @@ func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 	if err != nil {
 		panic(err)
 	}
-	m := game.NewGame(cfg.Models)
+	m := game.NewGame(cfg, s.User())
 	return m, []tea.ProgramOption{tea.WithAltScreen()}
 }
 

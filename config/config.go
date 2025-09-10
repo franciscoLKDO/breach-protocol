@@ -14,7 +14,8 @@ import (
 var configData []byte
 
 type Config struct {
-	Models []model.Config `json:"models"`
+	ScoreFile string         `json:"scoreFile"`
+	Models    []model.Config `json:"models"`
 }
 
 // NewGameConfig

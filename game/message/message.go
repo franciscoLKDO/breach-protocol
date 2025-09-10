@@ -14,6 +14,7 @@ type EndModelMsg struct {
 	Id     int           // Id of sender view
 	Status EndViewStatus // End status
 	Msg    string        // additional data from sender
+	Points int           // points given by the model
 }
 
 func OnEndViewMsg(msg EndModelMsg) tea.Cmd {

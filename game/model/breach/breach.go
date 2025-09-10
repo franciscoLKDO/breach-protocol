@@ -73,10 +73,14 @@ func (m Model) checkBufferSize(size BufferSizeMsg) (tea.Model, tea.Cmd) {
 // isOver verify if the game is over or not. To continue, the player should have fullfilled at least one sequence in the round
 func (m Model) isOver(reason string) (tea.Model, tea.Cmd) {
 	status := message.Failed
-	if idx := slices.IndexFunc(m.sequences, func(seq Sequence) bool { return seq.GetStatus() == SequenceSuccess }); idx >= 0 {
-		status = message.Success
+	points := 0
+	for _, seq := range m.sequences {
+		if seq.GetStatus() == SequenceSuccess {
+			points += seq.GetPoints()
+			status = message.Success
+		}
 	}
-	return m, message.OnEndViewMsg(message.EndModelMsg{Id: m.id, Status: status, Msg: reason})
+	return m, message.OnEndViewMsg(message.EndModelMsg{Id: m.id, Status: status, Msg: reason, Points: points})
 }
 
 // Init initializes the BreachModel.

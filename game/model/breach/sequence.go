@@ -21,11 +21,12 @@ const (
 type SequenceStatusMsg struct {
 	Id     int
 	Status SequenceStatus
+	Points int
 }
 
-func OnSequenceStatusMsg(id int, status SequenceStatus) tea.Cmd {
+func OnSequenceStatusMsg(id int, status SequenceStatus, points int) tea.Cmd {
 	return func() tea.Msg {
-		return SequenceStatusMsg{Id: id, Status: status}
+		return SequenceStatusMsg{Id: id, Status: status, Points: points}
 	}
 }
 
@@ -57,7 +58,7 @@ func (s *Sequence) VerifySymbol(sym Symbol) tea.Cmd {
 	}
 	if s.x >= len(s.data) {
 		s.status = SequenceSuccess
-		return OnSequenceStatusMsg(s.Id, SequenceSuccess)
+		return OnSequenceStatusMsg(s.Id, SequenceSuccess, s.GetPoints())
 	}
 	return nil
 }
@@ -69,7 +70,7 @@ func (s Sequence) Update(msg tea.Msg) (Sequence, tea.Cmd) {
 	case BufferTooSmallMsg:
 		if msg.Id == s.Id {
 			s.status = SequenceFailed
-			return s, OnSequenceStatusMsg(s.Id, SequenceFailed)
+			return s, OnSequenceStatusMsg(s.Id, SequenceFailed, 0)
 		}
 	case SymbolMsg:
 		if msg.selected {
@@ -122,6 +123,7 @@ func NewSequence(cfg SequenceConfig, id int) Sequence {
 		x:           0,
 		status:      SequenceRunning,
 		description: cfg.Description,
+		points:      cfg.Size * 10,
 		style: SequenceStyle{
 			CurrentSymbol:   style.RootStyle.Foreground(style.NeonPink).Bold(true),
 			ValidatedSymbol: style.RootStyle.Foreground(style.LimeGreen),

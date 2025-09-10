@@ -1,4 +1,5 @@
 {
+    "scoreFile": "/tmp/score.txt",
     "models": [
         {
             "type": "story",

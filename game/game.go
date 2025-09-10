@@ -1,12 +1,16 @@
 package game
 
 import (
+	"fmt"
+	"log"
+	"os"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/franciscolkdo/breach-protocol/config"
 	"github.com/franciscolkdo/breach-protocol/game/keymap"
 	"github.com/franciscolkdo/breach-protocol/game/message"
 	"github.com/franciscolkdo/breach-protocol/game/model"
@@ -27,15 +31,35 @@ const (
 const AppName = "Breach Protocol"
 const footerName = "Bartmoss Team"
 
+type Player struct {
+	Name  string
+	Score int
+}
+
+func (p Player) String() string {
+	return fmt.Sprintf("%s:%d", p.Name, p.Score)
+}
+
 type Model struct {
 	models     []model.Config
 	currentIdx int
 	current    tea.Model
+	player     Player
+	scoreFile  string
 
 	keyMap   keymap.KeyMap
 	ready    bool
 	viewport viewport.Model
 	askQuit  bool
+}
+
+func (m Model) saveScore() {
+	file, err := os.OpenFile(m.scoreFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatalf("failed to open file: %s", err)
+	}
+	defer file.Close() // Ensure the file is closed when the function exits
+	fmt.Fprintln(file, m.player)
 }
 
 // Init initializes the BreachModel.
@@ -96,10 +120,12 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, m.current.Init())
 		} else {
 			m.currentIdx++
+			m.player.Score += msg.Points
 			cmds = append(cmds, m.LoadModel())
 		}
 	// EndGame return Restart or Quit, set currentIdx=0 on restart
 	case end.EndGameMsg:
+		m.saveScore()
 		if msg == end.Quit {
 			return m, tea.Quit
 		} else {
@@ -144,26 +170,20 @@ func (m Model) titleView(content string) string {
 	border := lipgloss.DoubleBorder()
 	border.Right = "╠"
 	border.Left = "╣"
-	title := gameStyle.Title.BorderForeground(style.MetallicGold).Bold(true).BorderStyle(border).Padding(0, 2).Render(content)
-	line := gameStyle.Title.Render(strings.Repeat("═", max(0, (m.viewport.Width/2)-(lipgloss.Width(title)/2))))
+	title := style.RootStyle.Foreground(style.MetallicGold).BorderForeground(style.MetallicGold).Bold(true).BorderStyle(border).Padding(0, 2).Render(content)
+	line := style.RootStyle.Foreground(style.MetallicGold).Render(strings.Repeat("═", max(0, (m.viewport.Width/2)-(lipgloss.Width(title)/2))))
 
 	// Workaround to force background black after a border rendering
 	afterline := lipgloss.Place(m.viewport.Width, lipgloss.Height(title), lipgloss.Left, lipgloss.Center, line, lipgloss.WithWhitespaceBackground(style.DarkGray))
 	return lipgloss.JoinHorizontal(lipgloss.Center, line, title, afterline)
 }
 
-type GameStyle struct {
-	Title lipgloss.Style
-}
-
-var gameStyle = GameStyle{
-	Title: style.RootStyle.Foreground(style.MetallicGold),
-}
-
 // NewGame return a game model instance
-func NewGame(models []model.Config) Model {
+func NewGame(cfg config.Config, playerName string) Model {
 	g := Model{
-		models:     models,
+		models:     cfg.Models,
+		scoreFile:  cfg.ScoreFile,
+		player:     Player{Name: playerName, Score: 0},
 		ready:      false,
 		askQuit:    false,
 		currentIdx: 0,

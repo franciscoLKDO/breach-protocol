@@ -26,7 +26,7 @@ If you want to provide a specific path for the config, use the -c option.
 		if err != nil {
 			return fmt.Errorf("error on reading config file: %s", err)
 		}
-		g := game.NewGame(cfg.Models)
+		g := game.NewGame(cfg, "Player1")
 
 		_, err = tea.NewProgram(g, tea.WithMouseCellMotion()).Run()
 		if err != nil {
