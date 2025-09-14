@@ -5,7 +5,7 @@
             "type": "story",
             "config": {
                 "type": "text",
-                "text": "La pluie acide battait le pavé, reflétant les néons vifs qui parsemaient les rues crasseuses de Nexus City.\nUne métropole tentaculaire où les riches s'élevaient dans des tours de verre, tandis que les pauvres s'enfonçaient dans les souterrains infestés de débris numériques.\nZero, un inconnu fraîchement débarqué dans la ville, fixait l'horizon métallique, ses yeux cybernétiques captant chaque détail.\nIl n'avait ni passé, ni histoire. Tout ce qu'il voulait, c'était se faire un nom.\nDans ce monde où la réputation était la monnaie d'échange la plus précieuse, Zero savait qu'il n'aurait qu'une seule chance de gravir les échelons.\n\nArmé de son seul talent pour le piratage et ses implants, il se jura de conquérir la ville.\nDans les ombres des mégacorporations et des gangs, il y avait des secrets à voler, des alliances à briser, et des systèmes à renverser.\nÀ Nexus City, tout pouvait être contrôlé, tout pouvait être manipulé — même la destinée."
+                "text": "Acid rain pounded the pavement, reflecting the bright neon scattered across the grimy streets of Nexus City.\nA sprawling metropolis where the rich rose in glass towers, while the poor sank into undergrounds littered with digital debris.\nZero, a newcomer to the city, stared at the metallic horizon, his cybernetic eyes capturing every detail.\nHe had no past, no story. All he wanted was to make a name for himself.\nIn a world where reputation was the most valuable currency, Zero knew he would only have one chance to climb the ranks.\n\nArmed with only his hacking skills and implants, he vowed to conquer the city.\nIn the shadows of megacorporations and gangs, there were secrets to steal, alliances to break, and systems to topple.\nIn Nexus City, everything could be controlled, everything could be manipulated—even destiny."
             }
         },
         {
@@ -15,63 +15,63 @@
                 "chat": [
                     {
                         "name": "vex",
-                        "text": "T'es qui? J'ai pas l'habitude de parler aux inconnus."
+                        "text": "Who are you? I don't usually talk to strangers."
                     },
                     {
                         "name": "zero",
-                        "text": "Zero. J'suis nouveau en ville, mais je cherche du travail. J'ai entendu dire que t'avais des missions à offrir."
+                        "text": "Zero. I'm new in town, but I'm looking for work. I heard you might have some jobs."
                     },
                     {
                         "name": "vex",
-                        "text": "Zero, hein? J'en ai vu des types comme toi. Des petits malins qui débarquent ici en pensant qu'ils vont s'faire un nom du jour au lendemain. Sauf que la plupart finissent dans une ruelle, face contre le béton, sans avoir compris ce qui leur est arrivé."
+                        "text": "Zero, huh? I've seen guys like you. Little smart-asses who show up thinking they'll make a name overnight. Most end up in an alley, face against the concrete, without even knowing what hit them."
                     },
                     {
                         "name": "zero",
-                        "text": "Je suis pas comme eux. Si tu me files une mission, je te prouve ce que je vaux."
+                        "text": "I'm not like them. If you give me a job, I'll prove my worth."
                     },
                     {
                         "name": "vex",
-                        "text": "C'est ça que tu veux, hein? Un boulot. Mais moi, j'suis pas du genre à filer du taf au premier venu. Tu pourrais bosser pour mes ennemis ou pire... pour les corpos. T'es peut-être un flic."
+                        "text": "That's what you want, huh? A job. But I'm not the type to hand work to the first person who shows up. You could be working for my enemies or worse... for corpos. Maybe you're a cop."
                     },
                     {
                         "name": "zero",
-                        "text": "Si j'étais un flic, tu penses vraiment que je me pointerais ici, à découvert? Je veux juste des creds, et je suis prêt à bosser."
+                        "text": "If I were a cop, do you really think I'd show up here, in the open? I just want creds, and I'm ready to work."
                     },
                     {
                         "name": "vex",
-                        "text": "Ouais, c'est ça qu'ils disent tous. Bon... supposons que tu sois clean. J'ai peut-être un truc pour toi. Un petit job. Pas grand-chose, mais si tu fais l'affaire, on verra pour plus gros."
+                        "text": "Yeah, that's what they all say. Well... let's suppose you're clean. I might have something for you. A small job. Nothing big, but if you do well, we can talk about more."
                     },
                     {
                         "name": "zero",
-                        "text": "Je t'écoute."
+                        "text": "I'm listening."
                     },
                     {
                         "name": "vex",
-                        "text": "Une boîte nommée ChromePulse. Ils font des implants bon marché pour ceux qui peuvent pas s'payer du Militech ou du Arasaka. Rien d'énorme, mais y'a un marché pour leurs trucs. Leur dernier joujou, c'est un implant auditif. T'as qu'à aller là-bas, me ramener les plans, et choper quelques infos sur leurs clients."
+                        "text": "A company called ChromePulse. They make cheap implants for those who can't afford Militech or Arasaka. Nothing huge, but there’s a market for their stuff. Their latest toy is an auditory implant. Go there, grab the plans, and gather some info about their clients."
                     },
                     {
                         "name": "zero",
-                        "text": "C'est tout? Pas de gros systèmes de sécurité?"
+                        "text": "That's it? No heavy security systems?"
                     },
                     {
                         "name": "vex",
-                        "text": "T'attends quoi? Un tapis rouge? C'est pas un job de corpo, gamin. Y'aura des mercenaires sous-payés et deux ou trois drones pour surveiller le coin. Fais pas de bruit, récupère les données, et dégage avant qu'ils remarquent quoi que ce soit."
+                        "text": "What did you expect? A red carpet? It's not a corpo job, kid. There'll be underpaid mercs and a couple of drones watching the place. Don’t make noise, get the data, and get out before they notice anything."
                     },
                     {
                         "name": "zero",
-                        "text": "Je peux faire ça."
+                        "text": "I can do that."
                     },
                     {
                         "name": "vex",
-                        "text": "On verra bien. Si tu plantes, t'auras plus jamais besoin de repasser ici. Mais si tu réussis... peut-être qu'on pourra reparler affaires. Mais crois-moi, les prochains jobs seront pas aussi faciles."
+                        "text": "We'll see. If you screw up, you won’t need to come back. But if you succeed... maybe we can talk business again. But believe me, the next jobs won’t be as easy."
                     },
                     {
                         "name": "zero",
-                        "text": "J'suis pas venu pour des jobs faciles."
+                        "text": "I didn’t come for easy jobs."
                     },
                     {
                         "name": "vex",
-                        "text": "Bon, t'as du cran, j'te l'accorde. Mais Nexus a l'habitude de broyer les crânes d'ceux qui pensent être invincibles. Bonne chance, Zero. T'en auras besoin."
+                        "text": "Alright, you’ve got guts, I’ll give you that. But Nexus has a habit of crushing the heads of those who think they're invincible. Good luck, Zero. You’ll need it."
                     }
                 ]
             }
@@ -80,7 +80,7 @@
             "type": "story",
             "config": {
                 "type": "text",
-                "text": "Le bâtiment de ChromePulse semble modeste de l'extérieur, mais c'est ce genre d'endroit qui cache des pièges inattendus.\nLa première étape est simple: couper les alarmes. Tout doit rester sous le radar."
+                "text": "The ChromePulse building looks modest from the outside, but it's the kind of place that hides unexpected traps.\nThe first step is simple: cut the alarms. Everything must stay under the radar."
             }
         },
         {
@@ -92,7 +92,7 @@
                 "sequences": [
                     {
                         "size": 3,
-                        "description": "Coupure des alarmes extérieures",
+                        "description": "Cut the external alarms",
                         "points": 30
                     }
                 ]
@@ -102,7 +102,7 @@
             "type": "story",
             "config": {
                 "type": "text",
-                "text": "Les alarmes sont muettes, mais une caméra t'a repéré. Des gardes s'approchent. T'as quelques secondes pour éteindre la caméra et te cacher!"
+                "text": "The alarms are silent, but a camera spotted you. Guards are approaching. You have a few seconds to disable the camera and hide!"
             }
         },
         {
@@ -114,7 +114,7 @@
                 "sequences": [
                     {
                         "size": 3,
-                        "description": "Éteindre la caméra",
+                        "description": "Disable the camera",
                         "points": 30
                     }
                 ]
@@ -124,7 +124,7 @@
             "type": "story",
             "config": {
                 "type": "text",
-                "text": "T'y es presque! Juste quelques clics de plus et ces plans sont à toi. Mais les serveurs de ChromePulse sont mieux protégés que prévu. Si tu veux repartir vivant avec les données, t'as intérêt de rester concentré."
+                "text": "You're almost there! Just a few more clicks and these plans are yours. But ChromePulse's servers are better protected than expected. If you want to leave alive with the data, you better stay focused."
             }
         },
         {
@@ -136,12 +136,12 @@
                 "sequences": [
                     {
                         "size": 5,
-                        "description": "Voler les données de l'implant",
+                        "description": "Steal the implant data",
                         "points": 30
                     },
                     {
                         "size": 6,
-                        "description": "Pirater les comptes bancaires",
+                        "description": "Hack the bank accounts",
                         "points": 100
                     }
                 ]
@@ -151,7 +151,7 @@
             "type": "story",
             "config": {
                 "type": "text",
-                "text": "Mission accomplie, mais ça n'a pas été aussi propre que prévu. Maintenant que t'as les plans, ChromePulse va enquêter. Tu devrais te faire discret un moment, au cas où ils décident de contre-attaquer."
+                "text": "Mission accomplished, but it wasn’t as clean as expected. Now that you have the plans, ChromePulse will investigate. You should lay low for a while, in case they decide to counterattack."
             }
         }
     ]
