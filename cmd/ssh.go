@@ -19,6 +19,7 @@ import (
 	"github.com/charmbracelet/wish/activeterm"
 	"github.com/charmbracelet/wish/bubbletea"
 	"github.com/charmbracelet/wish/logging"
+	"github.com/charmbracelet/wish/recover"
 	"github.com/franciscolkdo/breach-protocol/config"
 	"github.com/franciscolkdo/breach-protocol/game"
 	"github.com/franciscolkdo/breach-protocol/game/style"
@@ -49,12 +50,11 @@ If you want to provide a specific path for the config, use the -c option.
 			// that case, see the open issues for more details.
 			ssh.AllocatePty(),
 			wish.WithMiddleware(
-				// run our Bubble Tea handler
-				bubbletea.Middleware(teaHandler),
-
 				// ensure the user has requested a tty
 				activeterm.Middleware(),
 				logging.Middleware(),
+				recover.Middleware(bubbletea.Middleware(teaHandler)),
+				// run our Bubble Tea handler
 			),
 		}
 		if sshKeyPath != "" {
@@ -92,6 +92,7 @@ func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 	style.SetRenderer(renderer)
 
 	cfg, err := config.GetConfig(configPath)
+
 	if err != nil {
 		panic(err)
 	}
