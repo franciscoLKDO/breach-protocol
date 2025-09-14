@@ -31,6 +31,8 @@ const (
 	port = "23234"
 )
 
+var sshKeyPath string
+
 // sshCmd represents the ssh command
 var sshCmd = &cobra.Command{
 	Use:   "ssh",
@@ -39,7 +41,7 @@ var sshCmd = &cobra.Command{
 If you want to provide a specific path for the config, use the -c option.
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		s, err := wish.NewServer(
+		options := []ssh.Option{
 			wish.WithAddress(net.JoinHostPort(host, port)),
 
 			// Allocate a pty.
@@ -54,7 +56,12 @@ If you want to provide a specific path for the config, use the -c option.
 				activeterm.Middleware(),
 				logging.Middleware(),
 			),
-		)
+		}
+		if sshKeyPath != "" {
+			options = append(options, wish.WithHostKeyPath(sshKeyPath))
+		}
+
+		s, err := wish.NewServer(options...)
 		if err != nil {
 			log.Error("Could not start server", "error", err)
 		}
@@ -81,19 +88,6 @@ If you want to provide a specific path for the config, use the -c option.
 }
 
 func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
-	// This should never fail, as we are using the activeterm middleware.
-	// pty, _, _ := s.Pty()
-
-	// When running a Bubble Tea app over SSH, you shouldn't use the default
-	// lipgloss.NewStyle function.
-	// That function will use the color profile from the os.Stdin, which is the
-	// server, not the client.
-	// We provide a MakeRenderer function in the bubbletea middleware package,
-	// so you can easily get the correct renderer for the current session, and
-	// use it to create the styles.
-	// The recommended way to use these styles is to then pass them down to
-	// your Bubble Tea model.
-
 	renderer := bubbletea.MakeRenderer(s)
 	style.SetRenderer(renderer)
 
@@ -107,5 +101,6 @@ func teaHandler(s ssh.Session) (tea.Model, []tea.ProgramOption) {
 
 func init() {
 	sshCmd.Flags().StringVarP(&configPath, "config", "c", "", "config file to use")
+	sshCmd.Flags().StringVarP(&sshKeyPath, "sshKey", "s", "", "ssh key file to use")
 	rootCmd.AddCommand(sshCmd)
 }
