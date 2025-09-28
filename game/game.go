@@ -54,7 +54,7 @@ type Model struct {
 }
 
 func (m Model) saveScore() {
-	file, err := os.OpenFile(m.scoreFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(m.scoreFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Fatalf("failed to open file: %s", err)
 	}
