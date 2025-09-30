@@ -27,9 +27,10 @@ const (
 	EndRound
 )
 
-// const marginBottom = 5
 const AppName = "Breach Protocol"
-const footerName = "Bartmoss Team"
+const footerName = "CERBERUS"
+
+var Flag = "HF-NOT-THIS-ONE"
 
 type Player struct {
 	Name  string
@@ -70,7 +71,7 @@ func (m Model) Init() tea.Cmd {
 func (m *Model) LoadModel() tea.Cmd {
 	var err error
 	if m.currentIdx > len(m.models)-1 {
-		m.current = end.NewModel(end.Config{Msg: "Congratulations you found the source code!\n HF-4bd24bccbe6aeb4f9c4e8e21f7248f00"})
+		m.current = end.NewModel(end.Config{Msg: fmt.Sprintf("Congratulations you found the source code!\n %s", Flag)})
 	} else {
 		m.current, err = m.models[m.currentIdx].Load()
 		if err != nil {
