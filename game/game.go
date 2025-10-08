@@ -30,7 +30,7 @@ const (
 const AppName = "Breach Protocol"
 const footerName = "CERBERUS"
 
-var Flag = "HF-NOT-THIS-ONE"
+var Flag = "goodbye!"
 
 type Player struct {
 	Name  string

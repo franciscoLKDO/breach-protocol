@@ -10,9 +10,6 @@ import (
 	"github.com/franciscolkdo/breach-protocol/game/model"
 )
 
-//go:embed config.json
-var configData []byte
-
 type Config struct {
 	ScoreFile string         `json:"scoreFile"`
 	Models    []model.Config `json:"models"`
@@ -21,11 +18,14 @@ type Config struct {
 // NewGameConfig
 func GetConfig(path string) (Config, error) {
 	var err error
-	if path != "" {
-		if configData, err = os.ReadFile(path); err != nil {
-			return Config{}, fmt.Errorf("error on loading config: %w", err)
-		}
+	var configData []byte
+	if path == "" {
+		return Config{}, fmt.Errorf("error no config given: %s", err)
 	}
+	if configData, err = os.ReadFile(path); err != nil {
+		return Config{}, fmt.Errorf("error on loading config: %w", err)
+	}
+
 	var cfg Config
 	err = json.Unmarshal(configData, &cfg)
 	if err != nil {
