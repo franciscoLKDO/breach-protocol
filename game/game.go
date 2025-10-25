@@ -2,9 +2,10 @@ package game
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"strings"
+
+	"github.com/charmbracelet/log"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/viewport"
@@ -61,6 +62,7 @@ func (m Model) saveScore() {
 	}
 	defer file.Close() // Ensure the file is closed when the function exits
 	fmt.Fprintln(file, m.player)
+	log.Infof("score saved: %s", m.player)
 }
 
 // Init initializes the BreachModel.
