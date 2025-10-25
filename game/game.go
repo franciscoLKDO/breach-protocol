@@ -133,6 +133,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 		} else {
 			m.currentIdx = 0
+			m.player.Score = 0
 			cmds = append(cmds, m.LoadModel())
 		}
 	// Pass all messages not already handled (internal msg for current model)
