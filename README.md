@@ -57,7 +57,7 @@ If you prefer, you can download the binary directly from the [releases page](htt
 ## Contributing
 
 Contributions are welcome! Feel free to fork this repository and submit a pull request.
-
+test
 ## License
 
 This project use MIT license
